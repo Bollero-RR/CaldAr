@@ -1,0 +1,23 @@
+{
+  "name": "caldar",
+  "version": "1.0.0",
+  "description": "practice",
+  "main": "index.js",
+  "scripts": {
+   "start":"node index",
+   "dev":"nodemon index"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DavidArroyo92/CaldAr.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DavidArroyo92/CaldAr/issues"
+  },
+  "homepage": "https://github.com/DavidArroyo92/CaldAr#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
