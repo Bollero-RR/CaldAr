@@ -19,6 +19,17 @@ router.get("/:id", (req, res) => {
     }
 });
 
+//Get a Technician by Category
+
+router.get('/lastName/:lastName', (req,res)=> {
+    const found = technicians.some(technicians => technicians.lastName === (req.params.lastName));
+    if (found){
+    res.json(technicians.filter(technicians => technicians.lastName === (req.params.lastName)));
+    }else{
+        res.status(400).send({msg: `Technician not found with this Last Name: ${req.params.lastName}`});
+    }
+});
+
 // Delete technician
 router.delete("/:id", (req, res) => {
     const found = technicians.some(idFilter(req));
