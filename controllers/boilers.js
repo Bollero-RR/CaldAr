@@ -14,7 +14,7 @@ router.get("/:id", (req, res) => {
   if (found) {
     res.json(boilers.filter(idFilter(req)));
   } else {
-    res.status(400).json({ msg: `No member with the id of ${req.params.id}` });
+    res.status(400).json({ msg: `No boiler with the id of ${req.params.id}` });
   }
 });
 
@@ -24,11 +24,11 @@ router.delete("/:id", (req, res) => {
 
   if (found) {
     res.json({
-      msg: "Member deleted",
+      msg: "Boiler deleted",
       boilers: boilers.filter((boiler) => !idFilter(req)(boiler)),
     });
   } else {
-    res.status(400).json({ msg: `No member with the id of ${req.params.id}` });
+    res.status(400).json({ msg: `No bolier with the id of ${req.params.id}` });
   }
 });
 
