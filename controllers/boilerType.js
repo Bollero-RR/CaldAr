@@ -23,7 +23,7 @@ router.get("/:id", (req, res) => {
 });
 
 //Get all single boiler type by attribute
-router.get('/skillsId/:skillsId', (req,res)=> {
+router.get("/skillsId/:skillsId", (req,res)=> {
   const found = boilerType.some(boilerType => boilerType.skillsId === (req.params.skillsId));
   
   if (found){
