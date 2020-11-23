@@ -22,6 +22,17 @@ router.get("/:id", (req, res) => {
   }
 });
 
+//Get all single boiler type by attribute
+router.get('/skillsId/:skillsId', (req,res)=> {
+  const found = boilerType.some(boilerType => boilerType.skillsId === (req.params.skillsId));
+  
+  if (found){
+    res.json(boilerType.filter(boilerType => boilerType.skillsId === (req.params.skillsId)));
+  }else{
+    res.status(400).send({msg: `Boiler Type not found with this skill Id: ${req.params.skillsId}`});
+  }
+});
+
 //Delete boiler
 router.delete("/:id", (req, res) => {
   const found = boilerType.some(idFilter(req));
