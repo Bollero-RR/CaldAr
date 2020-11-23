@@ -1,18 +1,15 @@
-// const getAllAppointments = () => console.log("This is not a test");
-// const getAppointmentById = () => console.log("This is not a test");
-// const getAppointmentByAttribute = () => console.log("This is not a test");
-// const deleteAppointmentById = () => console.log("This is not a test");
-
+// DECLARATE CONST
 const express = require("express");
 const router = express.Router();
 const appointments = require("../data/appointment.json");
-
 const idFilter = (req) => (appointment) => appointment.id === parseInt(req.params.id);
 
-//Get all Appointments
-router.get("/", (req, res) => res.json(appointments));
+//GET ALL APPOINTMENTS
+router.get("/", (req, res) => {
+  res.json(appointments)
+});
 
-//Get all single appointment
+//GET A SINGLE APPOINTMENTS BY ID
 router.get("/:id", (req, res) => {
   const found = appointments.some(idFilter(req));
   if (found) {
@@ -22,12 +19,22 @@ router.get("/:id", (req, res) => {
   }
 });
 
-//Delete appointment
+//GET A SINGLE APPOINTMENTS BY ATTRIBUTE
+router.get('/buildingId/:buildingId', (req,res)=> {
+    const found = appointments.some(appointments => appointments.buildingId === (req.params.buildingId));
+    if (found){
+      res.json(appointments.filter(appointments => appointments.buildingId === (req.params.buildingId)));
+    }else{
+      res.status(400).send({msg: `Appointments not found with this BuildingId: ${req.params.buildingId}`});
+    }
+  });
+
+//DELETE APPOINTMENT
 router.delete("/:id", (req, res) => {
   const found = appointments.some(idFilter(req));
   if (found) {
     res.json({
-      msg: "appointment deleted",
+      msg: "Appointment Deleted",
       appointments: appointments.filter((appointment) => !idFilter(req)(appointment)),
     });
   } else {
