@@ -7,7 +7,7 @@ const idFilter = (req) => (boiler) => boiler.id === parseInt(req.params.id);
 //Get all boilers
 router.get("/", (req, res) => res.json(boilers));
 
-//Get all single boiler
+//Get single boiler
 router.get("/:id", (req, res) => {
   const found = boilers.some(idFilter(req));
 
@@ -15,6 +15,18 @@ router.get("/:id", (req, res) => {
     res.json(boilers.filter(idFilter(req)));
   } else {
     res.status(400).json({ msg: `No boiler with the id of ${req.params.id}` });
+  }
+});
+
+
+//Get type boiler
+router.get("/typeId/:id", (req, res) => {
+  const found = boilers.some((boiler) => boiler.typeId === parseInt(req.params.id));
+
+  if (found) {
+    res.json(boilers.filter((boiler) => boiler.typeId === parseInt(req.params.id)));
+  } else {
+    res.status(400).json({ msg: `No boiler with the type of ${req.params.id}` });
   }
 });
 
