@@ -7,14 +7,25 @@ const idFilter = (req) => (customer) => customer.id === parseInt(req.params.id);
 //Get all customer
 router.get("/", (req, res) => res.json(customers));
 
-//Get all single customer
+//Get single customer
 router.get("/:id", (req, res) => {
   const found = customers.some(idFilter(req));
 
   if (found) {
     res.json(customers.filter(idFilter(req)));
   } else {
-    res.status(400).json({ msg: `No member with the id of ${req.params.id}` });
+    res.status(400).json({ msg: `No customer with the id of ${req.params.id}` });
+  }
+});
+
+//Get customer for one building
+router.get("/buildings/:id", (req, res) => {
+  const found = customers.some((customer) => customer.buildings.some((building) => building === parseInt(req.params.id)))
+
+  if (found) {
+    res.json(customers.filter((customer) => customer.buildings.some(building => building === parseInt(req.params.id))));
+  } else {
+    res.status(400).json({ msg: `No customer with the id of ${req.params.id}` });
   }
 });
 
