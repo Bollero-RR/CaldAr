@@ -21,9 +21,9 @@ router.get("/:id", (req, res) => {
 
 //GET A SINGLE APPOINTMENTS BY ATTRIBUTE
 router.get('/buildingId/:buildingId', (req,res)=> {
-    const found = appointments.some(appointments => appointments.buildingId === (req.params.buildingId));
+    const found = appointments.some(appointment => appointment.buildingId === parseInt(req.params.buildingId));
     if (found){
-      res.json(appointments.filter(appointments => appointments.buildingId === (req.params.buildingId)));
+      res.json(appointments.filter(appointment => appointment.buildingId === parseInt(req.params.buildingId)));
     }else{
       res.status(400).send({msg: `Appointments not found with this BuildingId: ${req.params.buildingId}`});
     }
@@ -31,11 +31,11 @@ router.get('/buildingId/:buildingId', (req,res)=> {
 
 //DELETE APPOINTMENT
 router.delete("/:id", (req, res) => {
-  const found = appointments.some(idFilter(req));
+  const found = appointments.some(appointment => appointment.id === parseInt(req.params.id));
   if (found) {
     res.json({
       msg: "Appointment Deleted",
-      appointments: appointments.filter((appointment) => !idFilter(req)(appointment)),
+      appointments: appointments.filter( appointment => appointment.id !== parseInt(req.params.id))
     });
   } else {
     res.status(400).json({ msg: `No appointment with the id of ${req.params.id}` });
