@@ -14,6 +14,9 @@ app.get('/', (req,res)=>{
     res.send('caldAr');
 });
 
+// Technicians API Routes
+app.use('/technicians', require('./controllers/technicians'));
+
 // Boilers API Routes
 app.use('/boilers', require('./controllers/boilers'));
 
