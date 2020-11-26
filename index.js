@@ -12,7 +12,7 @@ app.get('/', (req,res)=>{
     res.send('hello')
 });
 
-// Boilers API Routes
+// Technicians API Routes
 app.use('/technicians', require('./controllers/technicians'));
 
 const PORT = process.env.PORT || 3000;
