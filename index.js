@@ -11,13 +11,28 @@ app.use("/customers", require("./controllers/customer"));
 
 //CREATE ROUTE
 app.get('/', (req,res)=>{
-    res.send('Appointments')
+    res.send('caldAr');
 });
+
+// Boilers API Routes
+app.use('/boilers', require('./controllers/boilers'));
+
+//boiler types api routes
+
+app.use('/boilerType', require('./controllers/boilerType'));
+
 
 // Appointment API Routes
 app.use('/appointment', require('./controllers/appointment'));
+
 
 const PORT = process.env.PORT || 2000;
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 
+
+
+
+
+
+  
