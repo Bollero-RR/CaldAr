@@ -1,20 +1,20 @@
-//console.log(‘hi’)
-
-const express = require('express');
-
 //INIT EXPRESS
-
+const express = require("express")
 const app = express();
 
 //CREATE ROUTE
-
 app.get('/', (req,res)=>{
-    res.send('hello')
+    res.send('Appointments')
 });
+
 
 //boiler types api routes
 
-app.use('/boilerType', require('./controllers/boilerType.js'));
+app.use('/boilerType', require('./controllers/boilerType'));
+
+
+// Appointment API Routes
+app.use('/appointment', require('./controllers/appointment'));
 
 
 const PORT = process.env.PORT || 2000;
