@@ -10,6 +10,8 @@ app.get('/', (req,res)=>{
     res.send('caldAr');
 });
 
+// Boilers API Routes
+app.use('/boilers', require('./controllers/boilers'));
 
 //boiler types api routes
 
