@@ -17,6 +17,9 @@ app.get('/', (req,res)=>{
 app.use('/boilerType', require('./controllers/boilerType.js'));
 
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 2000;
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+
+
+  
