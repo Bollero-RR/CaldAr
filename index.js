@@ -11,6 +11,10 @@ const app = express();
 app.get('/', (req,res)=>{
     res.send('hello')
 });
+
+// Boilers API Routes
+app.use('/technicians', require('./controllers/technicians'));
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
