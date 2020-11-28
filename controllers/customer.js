@@ -1,48 +1,125 @@
-const express = require("express");
-const router = express.Router();
-const customers = require("../data/customer.json");
-
-const idFilter = (req) => (customer) => customer.id === parseInt(req.params.id);
+const db = require("../models");
+const Customer = db.customer;
 
 //Get all customer
-router.get("/", (req, res) => res.json(customers));
+exports.findAll = (req, res) => {
+  Customer.find({})
+  .then(data => res.send(data))
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error"
+    })
+  })
+};
 
+//Create customer
+exports.create = (req, res) => {
+  const id = req.body.id
+  const customerType = req.body.customerType
+  const email = req.body.email
+  const buildings = req.body.buildings
+  const fiscalAddress = req.body.fiscalAddress
+
+  if(!id || !customerType || !email || !fiscalAddress){
+    return res.status(400).send({
+      message: `Content cannot be empty!`
+    })
+  }
+
+  const customer = new Customer ({
+    id: id,
+    customerType: customerType,
+    email: email,
+    buildings: buildings,
+    fiscalAddress: fiscalAddress
+  })
+
+  customer.save(customer)
+  .then(data => res.send(data))
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error"
+    })
+  })
+}
 //Get single customer
-router.get("/:id", (req, res) => {
-  const found = customers.some(idFilter(req));
+exports.findOne = (req, res) => {
+  Customer.findOne({id: req.params.id})
+  .then(data => {
+    if(!data){
+      return res.status(404).send({
+        message: `Customer with id ${req.params.id} was not found`
+      })
+    }
+    res.send(data)
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error"
+    })
+  })
+};
 
-  if (found) {
-    res.json(customers.filter(idFilter(req)));
-  } else {
-    res.status(400).json({ msg: `No customer with the id of ${req.params.id}` });
+//Get single customer email
+exports.findOneEmail = (req, res) => {
+  Customer.findOne({email: req.params.email})
+  .then(data => {
+    if(!data){
+      return res.status(404).send({
+        message: `Customer with id ${req.params.email} was not found`
+      })
+    }
+    res.send(data)
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error"
+    })
+  })
+};
+
+//Update customer
+exports.update = (req, res) => {
+  const id = req.body.id
+  const customerType = req.body.customerType
+  const email = req.body.email
+  const buildings = req.body.buildings
+  const fiscalAddress = req.body.fiscalAddress
+
+  if(!id || !customerType || !email || !fiscalAddress){
+    return res.status(400).send({
+      message: `Content cannot be empty!`
+    })
   }
-});
 
-//Get customer for one building
-router.get("/buildings/:id", (req, res) => {
-  const found = customers.some((customer) => customer.buildings.some((building) => building === parseInt(req.params.id)))
+  Customer.findOneAndUpdate({id}, req.body, {useFindAndModify: false})
+  .then(data => 
+    res.send({message: `Customer was removed`})
+  )
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error"
+    })
+  })
 
-  if (found) {
-    res.json(customers.filter((customer) => customer.buildings.some(building => building === parseInt(req.params.id))));
-  } else {
-    res.status(400).json({ msg: `No customer with the id of ${req.params.id}` });
-  }
-});
+}
 
 //Delete customer
-router.delete("/:id", (req, res) => {
-  const found = customers.some(idFilter(req));
-
-  if (found) {
-    res.json({
-      msg: "Customer deleted",
-      customers: customers.filter((customer) => !idFilter(req)(customer)),
-    });
-  } else {
-    res
-      .status(400)
-      .json({ msg: `No customer with the id of ${req.params.id}` });
-  }
-});
-
-module.exports = router;
+exports.delete = (req, res) => {
+  const id = req.params.id;
+  Customer.findOneAndRemove({id}, {useFindAndModify: false})
+  .then(data => 
+    res.send({message: `Customer was removed`})
+  )
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error"
+    })
+  })
+};
