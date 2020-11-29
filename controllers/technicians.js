@@ -1,47 +1,111 @@
-const express = require('express');
-const router = express.Router();
-const technicians = require('../data/technicians.json');
-const idFilter = (req) => (technician) => technician.id === parseInt(req.params.id);
+const db = require("../models");
+const Technician = db.technician;
 
-// Get All Techinicians
-
-router.get("/", (req, res) => res.json(technicians));
-
-//Get a Single Techinician by ID
-
-router.get("/:id", (req, res) => {
-    const found = technicians.some(idFilter(req));
+// Create and save a new Technician
+exports.create = (res,req) => {
+  // Validate request
+  if (!req.body.id || !req.body.firstName || !req.body.lastName || !req.body.email || !req.body.typeIds || !req.body.skillsId || !req.body.hour_rate || !req.body.daily_capacity) {
+    res.status(400).send({ message: "Content can not be empty" });
+    return;
+  }
   
-    if (found) {
-      res.json(technicians.filter(idFilter(req)));
-    } else {
-      res.status(400).json({ msg: `No technician with the id of ${req.params.id}` });
-    }
-});
+  //Create a new Technician
+  const technician = new Technician ({
+    id: req.body.id,
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    email: req.body.email,
+    typeIds: req.body.typeIds,
+    skillsId: req.body.skillsId,
+    hour_rate: req.body.hour_rate,
+    daily_capacity: req.body.daily_capacity, 
+  });
 
-//Get a Technician by Category
+  // Save Technician in the database
+  technician
+    .save(technician)
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Error in the Technician creation"
+      })
+    })
+};
 
-router.get('/lastName/:lastName', (req,res)=> {
-    const found = technicians.some(technicians => technicians.lastName === (req.params.lastName));
-    if (found){
-    res.json(technicians.filter(technicians => technicians.lastName === (req.params.lastName)));
-    }else{
-        res.status(400).send({msg: `Technician not found with this Last Name: ${req.params.lastName}`});
-    }
-});
+// Update a technician by id
+exports.update = (req,res) => {
+  if (!req.body) {
+    return res.status(400).send ({
+      message: "Data to update can not be empty!"
+    })
+  }
+  // Validate request
+  if (!req.body.id || !req.body.firstName || !req.body.lastName || !req.body.email || !req.body.typeIds || !req.body.skillsId || !req.body.hour_rate || !req.body.daily_capacity) {
+    res.status(400).send({ message: "Content can not be empty" });
+    return;
+  }
 
-// Delete technician
-router.delete("/:id", (req, res) => {
-    const found = technicians.some(idFilter(req));
-  
-    if (found) {
-      res.json({
-        msg: "Technician deleted",
-        technicians: technicians.filter((technician) => !idFilter(req)(technician)),
+  const id = req.params.id;
+
+  Technician.findOneAndUpdate({id}, req.body, { useFindAndModify: false})
+    .then(data => {
+      if (!data) {
+        res.status(400).send({
+          message: `Cannot update technician with id=${id}. Maybe technician was not found!`
+        });
+      } else res.send({ message: "Technician was update successfully."})
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Error updating Technician with id=" + id
       });
-    } else {
-      res.status(400).json({ msg: `No technician with the id of ${req.params.id}` });
+    });
+}
+
+// Delete a Technician with id
+exports.delete = (req,res) => {
+  const id = req.params.id;
+  Technician.findOneAndRemove({id}, { useFindAndModify: false})
+    .then(data => {
+      res.send({ message: "Technician was removed successfully" })
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Error removing Technician with id=" + id
+    })
+}
+
+// Retrieve all technicians 
+exports.findAll = (req,res) => {
+  Technician.find({})
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+        err.message || "Some error ocurred while retriving technicians"
+  })
+};
+
+
+// Retrieve a single technician with id
+exports.findOne = (req,res) => {
+  Technician.findOne({id: req.params.id})
+  .then(data => {
+    if (!data) {
+      return res.status(400).send({
+        message: `Technician with id ${req.params.id} was not found`
+      })
     }
-});
-  
-module.exports = router;
+    res.send(data)
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+        err.message || "Some error ocurred while retriving technician"
+  })
+}
