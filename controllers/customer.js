@@ -21,7 +21,7 @@ exports.create = (req, res) => {
   const buildings = req.body.buildings
   const fiscalAddress = req.body.fiscalAddress
 
-  if(!id || !customerType || !email || !fiscalAddress){
+  if(!req.body.id || !req.body.customerType || !req.body.email || !req.body.fiscalAddress){
     return res.status(400).send({
       message: `Content cannot be empty!`
     })
@@ -98,7 +98,7 @@ exports.update = (req, res) => {
 
   Customer.findOneAndUpdate({id}, req.body, {useFindAndModify: false})
   .then(data => 
-    res.send({message: `Customer was removed`})
+    res.send({message: `Customer was updated`})
   )
   .catch(err => {
     res.status(500).send({
