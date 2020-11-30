@@ -18,8 +18,10 @@
   },
   "homepage": "https://github.com/DavidArroyo92/CaldAr#readme",
   "dependencies": {
+    "body": "^5.1.0",
     "express": "^4.17.1",
-    "mongoose": "^5.10.17"
+    "mongoose": "^5.10.17",
+    "parser": "^0.1.4"
   },
   "devDependencies": {
     "nodemon": "^2.0.6"

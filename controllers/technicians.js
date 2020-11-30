@@ -76,7 +76,7 @@ exports.delete = (req,res) => {
       res.status(500).send({
         message: "Error removing Technician with id=" + id
     })
-}
+},
 
 // Retrieve all technicians 
 exports.findAll = (req,res) => {
@@ -89,7 +89,7 @@ exports.findAll = (req,res) => {
       message:
         err.message || "Some error ocurred while retriving technicians"
   })
-};
+},
 
 
 // Retrieve a single technician with id
@@ -109,3 +109,7 @@ exports.findOne = (req,res) => {
         err.message || "Some error ocurred while retriving technician"
   })
 }
+  )})})}
+
+
+  
