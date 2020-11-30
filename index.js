@@ -1,41 +1,32 @@
 //INIT EXPRESS
-const express = require("express")
-const app = express();
+const express = require("express"); //instancia de manipulacion del servidor
+const app = express(); //instancia de manipulacion del servidor
+const bodyParser = require("body-parser"); //instancia de manipulacion de las request y trasnformarlas en json
+const PORT = process.env.PORT || 3000; //puerto donde se ejecutará
+const db = require("./models"); //logica de base de datos
+const router = require("./routes"); //logica de base de rutas
 
-//BUILDING API ROUTES
-app.use('/Buildings', require('./controllers/buildings'));
+//parse requests of content-type - application/json
+app.use(bodyParser.json()); //instancia a la librería body-parser
 
+//parse requests of content-type - application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({
+  extended: true
+})); //instancia a la librería body-parser
 
-// Customers API Routes
-app.use("/customers", require("./controllers/customer"));
+db.mongoose //instancia a la librería mongoose (para darle cierta consistencia a nuestra abse de datos)
+  .connect(db.url, { //acá solicito la url la cual me conectaré al la base de datos
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log("Connected to the database!"); //si sale todo bien
+  })
+  .catch((err) => {
+    console.log("Cannot connect to the database!", err); //si algo sale mal
+    process.exit();
+  });
 
-//CREATE ROUTE
-app.get('/', (req,res)=>{
-    res.send('caldAr');
-});
+app.use(router); //aca solicito el router
 
-// Technicians API Routes
-app.use('/technicians', require('./controllers/technicians'));
-
-// Boilers API Routes
-app.use('/boilers', require('./controllers/boilers'));
-
-//boiler types api routes
-
-app.use('/boilerType', require('./controllers/boilerType'));
-
-
-// Appointment API Routes
-app.use('/appointment', require('./controllers/appointment'));
-
-
-const PORT = process.env.PORT || 2000;
-
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
-
-
-
-
-
-
-  
+app.listen(PORT, () => console.log(`Server started on port ${PORT}`)); //una vez que se hizo todo lo anterior, pongo a mi servidor a escuchar las request http
