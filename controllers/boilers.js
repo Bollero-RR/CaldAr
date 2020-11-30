@@ -1,47 +1,125 @@
-const express = require("express");
-const router = express.Router();
-const boilers = require("../data/boilers.json");
+const db = require("../models");
+const Boiler = db.boilers;
 
-const idFilter = (req) => (boiler) => boiler.id === parseInt(req.params.id);
+//Get all Boiler
+exports.findAll = (req, res) => {
+  Boiler.find({})
+  .then(data => res.send(data))
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error"
+    })
+  })
+};
 
-//Get all boilers
-router.get("/", (req, res) => res.json(boilers));
+//Create Boiler
+exports.create = (req, res) => {
+  const id = req.body.id
+  const typeId = req.body.typeId
+  const maintainceRate = req.body.maintainceRate
+  const hourMaintainceCost = req.body.hourMaintainceCost
+  const hourEventualCost = req.body.hourEventualCost
 
-//Get single boiler
-router.get("/:id", (req, res) => {
-  const found = boilers.some(idFilter(req));
-
-  if (found) {
-    res.json(boilers.filter(idFilter(req)));
-  } else {
-    res.status(400).json({ msg: `No boiler with the id of ${req.params.id}` });
+  if(!req.body.id || !req.body.typeId || !req.body.maintainceRate || !req.body.hourMaintainceCost || !req.body.hourEventualCost){
+    return res.status(400).send({
+      message: `Content cannot be empty!`
+    })
   }
-});
 
+  const boiler = new Boiler ({
+    id: id,
+    typeId: typeId,
+    maintainceRate: maintainceRate,
+    hourMaintainceCost: hourMaintainceCost,
+    hourEventualCost: hourEventualCost
+  })
 
-//Get type boiler
-router.get("/typeId/:id", (req, res) => {
-  const found = boilers.some((boiler) => boiler.typeId === parseInt(req.params.id));
+  boiler.save(boiler)
+  .then(data => res.send(data))
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error"
+    })
+  })
+}
+//Get single Boiler
+exports.findOne = (req, res) => {
+  Boiler.findOne({id: req.params.id})
+  .then(data => {
+    if(!data){
+      return res.status(404).send({
+        message: `Boiler with id ${req.params.id} was not found`
+      })
+    }
+    res.send(data)
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error"
+    })
+  })
+};
 
-  if (found) {
-    res.json(boilers.filter((boiler) => boiler.typeId === parseInt(req.params.id)));
-  } else {
-    res.status(400).json({ msg: `No boiler with the type of ${req.params.id}` });
+//Get single Boiler email
+exports.findOneType = (req, res) => {
+  Boiler.findOne({typeId: req.params.type})
+  .then(data => {
+    if(!data){
+      return res.status(404).send({
+        message: `Boiler with Type id ${req.params.typeId} was not found`
+      })
+    }
+    res.send(data)
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error"
+    })
+  })
+};
+
+//Update Boiler
+exports.update = (req, res) => {
+  const id = req.body.id
+  const typeId = req.body.typeId
+  const maintainceRate = req.body.maintainceRate
+  const hourMaintainceCost = req.body.hourMaintainceCost
+  const hourEventualCost = req.body.hourEventualCost
+
+  if(!req.body.id || !req.body.typeId || !req.body.maintainceRate || !req.body.hourMaintainceCost || !req.body.hourEventualCost){
+    return res.status(400).send({
+      message: `Content cannot be empty!`
+    })
   }
-});
+
+  Boiler.findOneAndUpdate({id}, req.body, {useFindAndModify: false})
+  .then(data => 
+    res.send({message: `Boiler was updated`})
+  )
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error"
+    })
+  })
+
+}
 
 //Delete boiler
-router.delete("/:id", (req, res) => {
-  const found = boilers.some(idFilter(req));
-
-  if (found) {
-    res.json({
-      msg: "Boiler deleted",
-      boilers: boilers.filter((boiler) => !idFilter(req)(boiler)),
-    });
-  } else {
-    res.status(400).json({ msg: `No bolier with the id of ${req.params.id}` });
-  }
-});
-
-module.exports = router;
+exports.delete = (req, res) => {
+  const id = req.params.id;
+  Boiler.findOneAndRemove({id}, {useFindAndModify: false})
+  .then(data => 
+    res.send({message: `Boiler was removed`})
+  )
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error"
+    })
+  })
+};
