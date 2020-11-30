@@ -1,7 +1,7 @@
 const { route } = require('./buildings');
 const buildingRouter = require('./buildings');
 
-var router = require("express").Router();
+let router = require("express").Router();
 
 router.use('/buildings', buildingRouter)
 

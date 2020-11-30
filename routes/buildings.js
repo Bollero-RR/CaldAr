@@ -1,6 +1,6 @@
 const building = require("../controllers/buildings.js");
 
-var router = require("express").Router();
+let router = require("express").Router();
 
 //retrieve all buildings
 router.get("/", building.findAll);
