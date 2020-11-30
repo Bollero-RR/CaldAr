@@ -3,17 +3,30 @@ const db = require("../models");
 const Building = db.building;
 
 
+//retrieve all buildings from DB
+exports.findAll = (req, res) => {
+  Building.find({})
+    .then(data => 
+      res.send(data))
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message ||"Some error ocurrer while retrieving building"
+      })
+    })
+};
 //create & save a new building
 exports.create = (req, res) => {
   const id = req.body.id
   const businessName = req.body.businessName
   const email = req.body.email
   const phone = req.body.phone
+  const adress = req.body.adress
   const boilersAmount = req.body.boilersAmount
   const boilersType = req.body.boilersType
 
   //validate request
-  if (!req.body.id || !req.body.businessName || !req.body.email || !req.body.phone  || !req.body.boilersAmount || !req.body.boilersType){
+  if (!req.body.id || !req.body.businessName || !req.body.email || !req.body.adress || !req.body.phone  || !req.body.boilersAmount || !req.body.boilersType){
     return res.status(400).send({
       message: `Content cannot be empty!`
     }) 
@@ -24,6 +37,7 @@ exports.create = (req, res) => {
     id: id,
     businessName:businessName,
     email:email,
+    adress: adress,
     phone:phone,
     boilersAmount:boilersAmount,
     boilersType: boilersType
@@ -43,15 +57,21 @@ exports.create = (req, res) => {
     })
 };
 
-//retrieve all buildings from DB
-exports.findAll = (req, res) => {
-Building.find({})
-  .then(data => 
-    res.send(data))
+//Retrieve a single building by phone
+exports.findOnePhone = (req, res) => {
+  Building.findOne({phone: req.params.phone})
+  .then(data => {
+    if(!data){
+      return res.status(404).send({
+        message: `Building with phone:${req.params.phone} was not found`
+      })
+    }
+    res.send(data)
+  })
   .catch(err => {
     res.status(500).send({
       message:
-        err.message ||"Some error ocurrer while retrieving building"
+      err.message || "Some error ocurred while searching phone Building."
     })
   })
 };
