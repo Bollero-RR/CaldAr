@@ -108,7 +108,26 @@ exports.findOne = (req,res) => {
       message:
         err.message || "Some error ocurred while retriving technician"
   })
-}
+},
+
+// Retrieve a single technician by Last Name
+exports.findOneLastName = (req, res) => {
+  Building.findOne({lastName: req.params.lastName})
+  .then(data => {
+    if(!data){
+      return res.status(404).send({
+        message: `Technician with Last Name:${req.params.lastName} was not found`
+      })
+    }
+    res.send(data)
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error ocurred while searching Last Name Technician."
+    })
+  })
+},
   )})})}
 
 

@@ -19,7 +19,7 @@ router.get("/", technician.findAll);
 router.get("/:id", technician.findOne);
 
 // Retriene a single techinician with Last Name Atributte
-router.get("/:lastName", technician.findLastName);
+router.get("/:lastName", technician.findOneLastName);
 
 module.exports = router;
 
