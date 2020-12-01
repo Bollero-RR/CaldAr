@@ -12,7 +12,7 @@ const Technician = db.technician;
     }
 
     //Create an Technician
-    const technician = new Technician({
+    const newTechnician = new Technician({
       id: req.body.id,
       firstName: req.body.firstName,
       lastName: req.body.lastName,
@@ -24,8 +24,8 @@ const Technician = db.technician;
     });
 
     //Save technicians in the database
-    technician
-      .save(technician)
+    newTechnician
+      .save(newTechnician)
       .then(data => {
         res.send(data);
       })
@@ -35,6 +35,7 @@ const Technician = db.technician;
         });
       });
   };
+
   //Retrieve all technicians from database
   exports.findAll = (req, res) => {
     Technician.find({})
@@ -89,13 +90,8 @@ const Technician = db.technician;
 
   //Update an Technicians by the id in the request
   exports.update = (req, res) => {
-    if (!req.body) {
-      return res.status(400).send({
-        message: `Data updated can not be empty!`
-      });
-    }
-    
-    //Valdiate Request
+   
+    //Validate Request
     if (!req.body.id || !req.body.firstName || !req.body.lastName || !req.body.email || !req.body.typeIds || !req.body.skillsId || !req.body.hour_rate || !req.body.daily_capacity) {
       return res.status(400).send({
         message: `Content cannot be empty!2`
