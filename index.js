@@ -1,6 +1,6 @@
-const express = requiere('express');
+const express = require('express');
 const app = express();
-const bodyParser = requiere("body-parser");
+const bodyParser = require("body-parser");
 const db = require("./models");
 const router = require("./routes");
 
