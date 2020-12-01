@@ -129,11 +129,15 @@ exports.delete = (req, res) => {
     }, {
       useFindAndModify: false
     })
-    .then(data =>
-      res.send({
-        message: `Appointment was removed successfully`
+    .then(data => {
+      if (!data) {
+        res.status(404).send({
+          message: `Cannot delete appointment with the id: " ${id} ". Maybe the appointment was not found!`
+        });
+      } else res.send({
+        message: "Appointment was update successfully."
       })
-    )
+    })
     .catch(err => {
       res.status(500).send({
         message: err.message || "Error removing the Appointment with the id: " + id
