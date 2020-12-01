@@ -15,11 +15,6 @@ exports.findAll = (req, res) => {
 
 //Create customer
 exports.create = (req, res) => {
-  const id = req.body.id
-  const customerType = req.body.customerType
-  const email = req.body.email
-  const buildings = req.body.buildings
-  const fiscalAddress = req.body.fiscalAddress
 
   if(!req.body.id || !req.body.customerType || !req.body.email || !req.body.fiscalAddress){
     return res.status(400).send({
@@ -27,7 +22,13 @@ exports.create = (req, res) => {
     })
   }
 
-  const customer = new Customer ({
+  const id = req.body.id
+  const customerType = req.body.customerType
+  const email = req.body.email
+  const buildings = req.body.buildings
+  const fiscalAddress = req.body.fiscalAddress
+
+  const newCustomer = new Customer ({
     id: id,
     customerType: customerType,
     email: email,
@@ -35,7 +36,7 @@ exports.create = (req, res) => {
     fiscalAddress: fiscalAddress
   })
 
-  customer.save(customer)
+  newCustomer.save(newCustomer)
   .then(data => res.send(data))
   .catch(err => {
     res.status(500).send({
@@ -44,6 +45,7 @@ exports.create = (req, res) => {
     })
   })
 }
+
 //Get single customer
 exports.findOne = (req, res) => {
   Customer.findOne({id: req.params.id})
@@ -84,19 +86,14 @@ exports.findOneEmail = (req, res) => {
 
 //Update customer
 exports.update = (req, res) => {
-  const id = req.body.id
-  const customerType = req.body.customerType
-  const email = req.body.email
-  const buildings = req.body.buildings
-  const fiscalAddress = req.body.fiscalAddress
 
-  if(!id || !customerType || !email || !fiscalAddress){
+  if(!req.body.id || !req.body.customerType || !req.body.email || !req.body.fiscalAddress){
     return res.status(400).send({
       message: `Content cannot be empty!`
     })
   }
 
-  Customer.findOneAndUpdate({id}, req.body, {useFindAndModify: false})
+  Customer.findOneAndUpdate({id: req.body.id}, req.body, {useFindAndModify: false})
   .then(data => 
     res.send({message: `Customer was updated`})
   )
@@ -111,8 +108,8 @@ exports.update = (req, res) => {
 
 //Delete customer
 exports.delete = (req, res) => {
-  const id = req.params.id;
-  Customer.findOneAndRemove({id}, {useFindAndModify: false})
+
+  Customer.findOneAndRemove({id: req.body.id}, {useFindAndModify: false})
   .then(data => 
     res.send({message: `Customer was removed`})
   )
