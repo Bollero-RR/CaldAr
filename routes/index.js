@@ -1,9 +1,9 @@
-const { route } = require('./technicians');
-const technicianRouter = require('/technicians');
+const { route } = require('./technician');
+const technicianRouter = require('./technician');
 
 var router = require("express").Router();
 
-router.use('./technicians', technicianRouter);
+router.use('./technician', technicianRouter);
 
 module.exports = router;
 

@@ -9,8 +9,8 @@ module.exports = mongoose => {
                 email: String,
                 typeIds: Array,
                 skillsId: Array,
-                hour_rate: Number,
-                daily_capacity: Number, 
+                hour_rate: String,
+                daily_capacity: Number
             },
             { timestamps: true }
         )
