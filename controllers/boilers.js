@@ -15,11 +15,6 @@ exports.findAll = (req, res) => {
 
 //Create Boiler
 exports.create = (req, res) => {
-  const id = req.body.id
-  const typeId = req.body.typeId
-  const maintainceRate = req.body.maintainceRate
-  const hourMaintainceCost = req.body.hourMaintainceCost
-  const hourEventualCost = req.body.hourEventualCost
 
   if(!req.body.id || !req.body.typeId || !req.body.maintainceRate || !req.body.hourMaintainceCost || !req.body.hourEventualCost){
     return res.status(400).send({
@@ -27,7 +22,13 @@ exports.create = (req, res) => {
     })
   }
 
-  const boiler = new Boiler ({
+  const id = req.body.id
+  const typeId = req.body.typeId
+  const maintainceRate = req.body.maintainceRate
+  const hourMaintainceCost = req.body.hourMaintainceCost
+  const hourEventualCost = req.body.hourEventualCost
+
+  const newBoiler = new Boiler ({
     id: id,
     typeId: typeId,
     maintainceRate: maintainceRate,
@@ -35,7 +36,7 @@ exports.create = (req, res) => {
     hourEventualCost: hourEventualCost
   })
 
-  boiler.save(boiler)
+  newBoiler.save(newBoiler)
   .then(data => res.send(data))
   .catch(err => {
     res.status(500).send({
@@ -44,6 +45,7 @@ exports.create = (req, res) => {
     })
   })
 }
+
 //Get single Boiler
 exports.findOne = (req, res) => {
   Boiler.findOne({id: req.params.id})
@@ -63,7 +65,7 @@ exports.findOne = (req, res) => {
   })
 };
 
-//Get single Boiler email
+//Get single Boiler for type
 exports.findOneType = (req, res) => {
   Boiler.findOne({typeId: req.params.type})
   .then(data => {
@@ -84,11 +86,6 @@ exports.findOneType = (req, res) => {
 
 //Update Boiler
 exports.update = (req, res) => {
-  const id = req.body.id
-  const typeId = req.body.typeId
-  const maintainceRate = req.body.maintainceRate
-  const hourMaintainceCost = req.body.hourMaintainceCost
-  const hourEventualCost = req.body.hourEventualCost
 
   if(!req.body.id || !req.body.typeId || !req.body.maintainceRate || !req.body.hourMaintainceCost || !req.body.hourEventualCost){
     return res.status(400).send({
@@ -96,7 +93,7 @@ exports.update = (req, res) => {
     })
   }
 
-  Boiler.findOneAndUpdate({id}, req.body, {useFindAndModify: false})
+  Boiler.findOneAndUpdate({id: req.body.id}, req.body, {useFindAndModify: false})
   .then(data => 
     res.send({message: `Boiler was updated`})
   )
@@ -111,8 +108,8 @@ exports.update = (req, res) => {
 
 //Delete boiler
 exports.delete = (req, res) => {
-  const id = req.params.id;
-  Boiler.findOneAndRemove({id}, {useFindAndModify: false})
+
+  Boiler.findOneAndRemove({id: req.params.id}, {useFindAndModify: false})
   .then(data => 
     res.send({message: `Boiler was removed`})
   )
