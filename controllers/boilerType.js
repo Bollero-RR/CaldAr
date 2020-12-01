@@ -4,7 +4,9 @@ const BoilerType = db.boilerType;
 //Get all boiler type
 exports.findAll = (req, res) => {
   BoilerType.find({})
-  .then(data => res.send(data))
+  .then(data => {
+    res.send(data); 
+  })
   .catch(err => {
     res.status(500).send({
       message:
@@ -12,14 +14,16 @@ exports.findAll = (req, res) => {
     })
   })
 };
-
 //Create boiler type
 exports.create = (req, res) => {
   const id = req.body.id;
   const type = req.body.type; 
   const stock = req.body.stock; 
+  const skillId = req.body.skillId;
+  const description = req.body.description;
 
-  if(!req.body.id || !req.body.type || !req.body.sotck){
+
+  if(!req.body.id || !req.body.type || !req.body.stock || !req.body.skillId || !req.body.description){
     return res.status(400).send({
       message: `Content cannot be empty!`
     })
@@ -28,7 +32,10 @@ exports.create = (req, res) => {
   const boilerType = new BoilerType ({
     id: id,
     type: type,
-    stock: stock
+    stock: stock,
+    description: description,
+    skillId: skillId
+
   })
 
   boilerType.save(boilerType)
@@ -47,7 +54,7 @@ exports.findOneType = (req, res) => {
   .then(data => {
     if(!data){
       return res.status(404).send({
-        message: `boiler type with type ${req.params.id} was not found`
+        message: `boiler with type ${req.params.type} was not found`
       })
     }
     res.send(data)
@@ -82,13 +89,12 @@ exports.findOneId = (req, res) => {
 //Update boiler type
 exports.update = (req, res) => {
   const id = req.body.id;
-  const type = req.body.type;
-  const state = req.body.state;
-  const history = req.body.hitory;
-  const stock = req.body.sotck;
-  const installed = req.body.installed;
+  const type = req.body.type; 
+  const stock = req.body.stock; 
+  const skillId = req.body.skillId;
+  const description = req.body.description;
 
-  if(!id || !type || !state || !history || !sotck || !installed){
+  if(!id || !type || !stock || !skillId || !description){
     return res.status(400).send({
       message: `Content cannot be empty!`
     })

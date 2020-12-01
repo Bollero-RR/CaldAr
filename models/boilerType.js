@@ -1,4 +1,3 @@
-const { Schema } = require("mongoose");
 
 module.exports = mongoose => {
     const BoilerType = mongoose.model(
@@ -7,22 +6,9 @@ module.exports = mongoose => {
             {
                 id: Number,
                 type: String,
-                state: {
-                    install: Boolean,
-                    building: String
-                },
-                history: {
-                    typeMaintenance: String,
-                    date: Date,
-                    technician: String
-                },
-                qualifiedTechnician: Array,
+                description: String,
                 stock: Number,
-                installed: {
-                    inService: Boolean,
-                    maintenance: Boolean,
-                    stopped: Boolean
-                },
+                skillsId: Number
             },
             {timestamps: true}
         )
