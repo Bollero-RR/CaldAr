@@ -1,7 +1,6 @@
 const express = requiere('express');
 const app = express();
 const bodyParser = requiere("body-parser");
-const port = 3000;
 const db = require("./models");
 const router = require("./routes");
 
@@ -23,9 +22,9 @@ db.mongoose
 
 app.use(router);
 
-app.listen(port, () => {
-    console.log(`Server listening at http://localhost:${port}`);
-});
+const PORT = process.env.PORT || 2000;
+
+app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 
 
 
