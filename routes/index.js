@@ -1,7 +1,7 @@
 const { route } = require('./boilerType');
 const boilerTypeRouter = require("./boilerType")
 
-let router = require("express").Router();
+var router = require("express").Router();
 
 router.use("/boilerType", boilerTypeRouter)
 

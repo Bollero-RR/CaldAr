@@ -42,7 +42,7 @@ exports.create = (req, res) => {
 }
 
 //Get single boiler type
-exports.findOne = (req, res) => {
+exports.findOneType = (req, res) => {
   BoilerType.findOne({type: req.params.type})
   .then(data => {
     if(!data){
@@ -61,7 +61,7 @@ exports.findOne = (req, res) => {
 };
 
 //Get single id
-exports.findOneEmail = (req, res) => {
+exports.findOneId = (req, res) => {
   BoilerType.findOne({id: req.params.id})
   .then(data => {
     if(!data){
