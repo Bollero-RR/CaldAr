@@ -2,7 +2,7 @@
 const express = require("express"); //instancia de manipulacion del servidor
 const app = express(); //instancia de manipulacion del servidor
 const bodyParser = require("body-parser"); //instancia de manipulacion de las request y trasnformarlas en json
-const PORT = process.env.PORT || 3000; //puerto donde se ejecutará
+const PORT = process.env.PORT || 2000; //puerto donde se ejecutará
 const db = require("./models"); //logica de base de datos
 const router = require("./routes"); //logica de base de rutas
 
