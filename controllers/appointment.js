@@ -11,7 +11,7 @@ exports.create = (req, res) => {
   }
 
   //Create an Appointment
-  const appointment = new Appointment({
+  const newAppointment = new Appointment({
     id: req.body.id,
     buildingId: req.body.buildingId,
     boilerId: req.body.boilerId,
@@ -20,8 +20,8 @@ exports.create = (req, res) => {
   });
 
   //Save appointments in the database
-  appointment
-    .save(appointment)
+  newAppointment
+    .save(newAppointment)
     .then(data => {
       res.send(data);
     })
@@ -111,7 +111,7 @@ exports.update = (req, res) => {
           message: `Cannot update appointment with the id: " ${id} ". Maybe the appointment was not found!`
         });
       } else res.send({
-        message: "Appointment was update successfully."
+        message: `Appointment with the id: " ${id} " was update successfully.`
       })
     })
     .catch(err => {
@@ -135,7 +135,7 @@ exports.delete = (req, res) => {
           message: `Cannot delete appointment with the id: " ${id} ". Maybe the appointment was not found!`
         });
       } else res.send({
-        message: "Appointment was update successfully."
+        message: `Appointment with the id: " ${id} " was deleted successfully.`
       })
     })
     .catch(err => {
