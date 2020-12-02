@@ -19,7 +19,7 @@ exports.findAll = (req, res) => {
 exports.create = (req, res) => {
 
    //validate request
-   if (!req.body.id || !req.body.businessName || !req.body.email || !req.body.adress || !req.body.phone  || !req.body.boilersAmount || !req.body.boilersType){
+   if (!req.body.id || !req.body.businessName || !req.body.email || !req.body.adress || !req.body.phone  || !req.body.boilersAmount || !req.body.boilersType || !req.body.boilersId){
     return res.status(400).send({
       message: `Content cannot be empty!`
     }) 
@@ -31,6 +31,7 @@ exports.create = (req, res) => {
   const adress = req.body.adress
   const boilersAmount = req.body.boilersAmount
   const boilersType = req.body.boilersType
+  const boilersId = req.body.boilersId
 
   //create a building
     const newBuilding = new Building({
@@ -40,12 +41,13 @@ exports.create = (req, res) => {
     adress: adress,
     phone:phone,
     boilersAmount:boilersAmount,
-    boilersType: boilersType
+    boilersType: boilersType,
+    boilersId: boilersId
   })
 
   //save building in the DB
   newBuilding
-    .save(building)
+    .save(newBuilding)
     .then(data =>{
         res.send(data);
     })
@@ -103,7 +105,7 @@ exports.update = (req, res) =>{
     })
   }
   //validate request
-  if (!req.body.id || !req.body.businessName || !req.body.email || !req.body.phone || !req.body.adress || !req.body.boilersAmount || !req.body.boilersType){
+  if (!req.body.id || !req.body.businessName || !req.body.email || !req.body.phone || !req.body.adress || !req.body.boilersAmount || !req.body.boilersType || !req.body.boilersId){
     res.status(400).send({ message: "content can not b empty"});
     return;
   }
