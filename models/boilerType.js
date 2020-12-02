@@ -5,10 +5,10 @@ module.exports = mongoose => {
         mongoose.Schema(
             {
                 id: Number,
-                type: String,
+                type: Number,
                 description: String,
                 stock: Number,
-                skillsId: Number
+                skillId: Number
             },
             {timestamps: true}
         )
