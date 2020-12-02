@@ -17,6 +17,13 @@ exports.findAll = (req, res) => {
 };
 //create & save a new building
 exports.create = (req, res) => {
+
+   //validate request
+   if (!req.body.id || !req.body.businessName || !req.body.email || !req.body.adress || !req.body.phone  || !req.body.boilersAmount || !req.body.boilersType){
+    return res.status(400).send({
+      message: `Content cannot be empty!`
+    }) 
+  }
   const id = req.body.id
   const businessName = req.body.businessName
   const email = req.body.email
@@ -25,15 +32,8 @@ exports.create = (req, res) => {
   const boilersAmount = req.body.boilersAmount
   const boilersType = req.body.boilersType
 
-  //validate request
-  if (!req.body.id || !req.body.businessName || !req.body.email || !req.body.adress || !req.body.phone  || !req.body.boilersAmount || !req.body.boilersType){
-    return res.status(400).send({
-      message: `Content cannot be empty!`
-    }) 
-  }
-
   //create a building
-    const building = new Building({
+    const newBuilding = new Building({
     id: id,
     businessName:businessName,
     email:email,
@@ -44,7 +44,7 @@ exports.create = (req, res) => {
   })
 
   //save building in the DB
-  building
+  newBuilding
     .save(building)
     .then(data =>{
         res.send(data);
