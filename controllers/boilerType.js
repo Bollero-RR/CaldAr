@@ -1,54 +1,132 @@
+const db = require("../models");
+const BoilerType = db.boilerType;
 
-const express = require("express");
+//Get all boiler type
+exports.findAll = (req, res) => {
+  BoilerType.find({})
+  .then(data => {
+    res.send(data); 
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error"
+    })
+  })
+};
+//Create boiler type
+exports.create = (req, res) => {
+  const id = req.body.id;
+  const type = req.body.type; 
+  const stock = req.body.stock; 
+  const skillId = req.body.skillId;
+  const description = req.body.description;
 
-const router = express.Router();
 
-const boilerType = require("../data/boilerType.json");
-
-const idFilter = (req) => (boilerType) => boilerType.id === parseInt(req.params.id);
-
-
-//Get all boiler types
-router.get("/", (req, res) => res.json(boilerType));
-
-//Get a single boiler type
-router.get("/:id", (req, res) => {
-  const found = boilerType.some(idFilter(req));
-
-  if (found) {
-    res.json(boilerType.filter(idFilter(req)));
-  } else {
-    res.status(400).json({ msg: `No boiler type with the id of ${req.params.id}` });
+  if(!req.body.id || !req.body.type || !req.body.stock || !req.body.skillId || !req.body.description){
+    return res.status(400).send({
+      message: `Content cannot be empty!`
+    })
   }
-});
 
-//Get all single boiler type by attribute
-router.get("/skillsId/:skillsId", (req,res)=> {
-  const found = boilerType.some(boilerType => boilerType.skillsId === (req.params.skillsId));
-  
-  if (found){
-    res.json(boilerType.filter(boilerType => boilerType.skillsId === (req.params.skillsId)));
-  }else{
-    res.status(400).send({msg: `Boiler Type not found with this skill Id: ${req.params.skillsId}`});
+  const boilerType = new BoilerType ({
+    id: id,
+    type: type,
+    stock: stock,
+    description: description,
+    skillId: skillId
+
+  })
+
+  boilerType.save(boilerType)
+  .then(data => res.send(data))
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error occurred while creating the  boiler type"
+    })
+  })
+}
+
+//Get single boiler type
+exports.findOneType = (req, res) => {
+  BoilerType.findOne({type: req.params.type})
+  .then(data => {
+    if(!data){
+      return res.status(404).send({
+        message: `boiler with type ${req.params.type} was not found`
+      })
+    }
+    res.send(data)
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error occurred while searching the  boiler type"
+    })
+  })
+};
+
+//Get single id
+exports.findOneId = (req, res) => {
+  BoilerType.findOne({id: req.params.id})
+  .then(data => {
+    if(!data){
+      return res.status(404).send({
+        message: `boiler type with id ${req.params.id} was not found`
+      })
+    }
+    res.send(data)
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error occurred while searching the  boiler type"
+    })
+  })
+};
+
+//Update boiler type
+exports.update = (req, res) => {
+  const id = req.body.id;
+  const type = req.body.type; 
+  const stock = req.body.stock; 
+  const skillId = req.body.skillId;
+  const description = req.body.description;
+
+  if(!id || !type || !stock || !skillId || !description){
+    return res.status(400).send({
+      message: `Content cannot be empty!`
+    })
   }
-});
 
-//Delete boiler
-router.delete("/:id", (req, res) => {
-  const found = boilerType.some(idFilter(req));
+  BoilerType.findOneAndUpdate({id}, req.body, {useFindAndModify: false})
+  .then(data => 
+    res.send({message: `boiler type was updated`})
+  )
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error occurred while update the  boiler type"
+    })
+  })
 
-  if (found) {
-    res.json({
-      msg: "Boiler type deleted",
-      boilerType: boilerType.filter((boilerType) => !idFilter(req)(boilerType)),
-    });
-  } else {
-    res
-      .status(400)
-      .json({ msg: `No boiler type with the id of ${req.params.id}` });
-  }
-});
+}
 
-module.exports = router;
+//Delete boiler 
+exports.delete = (req, res) => {
+  const id = req.params.id;
+  BoilerType.findOneAndRemove({id}, {useFindAndModify: false})
+  .then(data => 
+    res.send({message: `boiler type was removed`})
+  )
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error occurred while delete the  boiler type"
+    })
+  })
+};
+
 
 
