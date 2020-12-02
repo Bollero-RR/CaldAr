@@ -10,7 +10,8 @@ module.exports = mongoose =>{
                 adress: String,
                 phone: Number,
                 boilersAmount: Number,
-                boilersType: String
+                boilersType: String,
+                boilersId: Array
             },
             {timestamps:true }
         )
