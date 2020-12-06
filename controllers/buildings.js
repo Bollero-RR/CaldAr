@@ -19,11 +19,47 @@ exports.findAll = (req, res) => {
 exports.create = (req, res) => {
 
    //validate request
-   if (!req.body.id || !req.body.businessName || !req.body.email || !req.body.adress || !req.body.phone  || !req.body.boilersAmount || !req.body.boilersType || !req.body.boilersId){
-    return res.status(400).send({
-      message: `Content cannot be empty!`
-    }) 
+  if (!req.body.id) {
+    res.status(400).send({
+      message:`por favor ingresa un id`
+    })
   }
+   else if (!req.body.businessName){
+     res.status(400).send({
+      message: `por favor ingresa tu nombre!`
+       }) 
+  }
+  else if (!req.body.email){
+    res.status(400).send({
+     message: `por favor ingresa tu email!`
+      }) 
+ }
+ else if (!req.body.phone){
+  res.status(400).send({
+   message: `por favor ingresa tu telefono!`
+    }) 
+}
+else if (!req.body.adress){
+  res.status(400).send({
+   message: `por favor ingresa tu direccion!`
+    }) 
+}
+else if (!req.body.boilersAmount){
+  res.status(400).send({
+   message: `por favor ingresa una cantidad de calderas!`
+    }) 
+} 
+else if (!req.body.boilersType){
+  res.status(400).send({
+   message: `por favor ingresa un tipo de caldera`
+    }) 
+} 
+else if (!req.body.boilersId){
+  res.status(400).send({
+   message: `por favor ingresa un id de caldera!`
+    }) 
+} 
+
   const id = req.body.id
   const businessName = req.body.businessName
   const email = req.body.email
