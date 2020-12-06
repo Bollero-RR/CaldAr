@@ -1,7 +1,8 @@
 
 const db = require("../models");
 const Building = db.building;
-
+const numbersEr =/\d/g;
+const lettersEr = new RegExp('[A-D]','i')
 
 //retrieve all buildings from DB
 exports.findAll = (req, res) => {
@@ -15,59 +16,132 @@ exports.findAll = (req, res) => {
       })
     })
 };
+
+//validate fields
+
+    //validate ID
+    const validateId = (res, id) => {
+      if (isNaN(id)) {
+        return res.status(400).send({
+          message: `please write a valid ID`,
+        });
+      }
+      return true;
+    };
+
+    //validate BusinessName
+    const validateBusinessName = (res, businessName) => {
+      const lettersAmount = businessName.length;
+      if (lettersAmount < 2) {
+        return res.status(400).send({
+          message: `The name must contain 2 letters or less`,
+        });
+      }
+      return true;
+    };
+
+    //validate email
+    const validateEmail = (res, email) => {
+      const at = email.indexOf("@");
+      const com = email.indexOf(".com");
+      if (at === -1 || com ===-1) {
+        return res.status(400).send({
+          message: `invalid e-mail, the E-mail must contain @ and .com`,
+        });
+      }
+      return true;
+    };
+
+    //validate phone
+    const validatePhone = (res, phone) => {
+      const numberAmount = phone.length;
+      const character = new RegExp('^[+0-9]+[^-_()\\s]$');
+      if (numberAmount <7 || !character.test(phone)) {
+        return res.status(400).send({
+          message: `Number of at least 7 digits, do not accept spaces, hyphens or parentheses`,
+        });
+      }
+      return true;
+    };
+    //validate Adress
+    const validateAdress = (res, adress) =>{
+      const lettersAmount = adress.length;
+      const space = adress.indexOf(" ");
+      const gotNumber = numbersEr.test(adress);
+
+      if (lettersAmount < 5 || space ===-1 || !gotNumber) {
+        return res.status(400).send({
+          message: `adress must contain least 5 characters, with letters, numbers and a space`,
+        });
+      }
+      return true;
+    }
+
+    //validate Boilers Amount
+    const validateBoilerAmount = (res, boilersAmount) =>{
+      if (boilersAmount >2){
+        return res.status(400).send({
+          message: `can be only 1 or 2 boilers amount`,
+        });
+      }
+      return true;
+    }
+    //validate Boilers Type
+    const validateBoilersType = (res, boilersType) =>{
+     const letters = lettersEr.test(boilersType)
+      
+      if (!letters){
+        return res.status(400).send({
+          message: `Can be type A, B,C OR D`,
+        });
+      }
+      return true;
+    }
+  
+    //validate Boilers ID
+    const validateBoilersId = (res, boilersId) => {
+
+      if (boilersId < 1 || boilersId > 10) {
+        return res.status(400).send({
+          message: `The type of boiler does not exist!`,
+        });
+      }
+      return true;
+    };
+
 //create & save a new building
 exports.create = (req, res) => {
 
    //validate request
-  if (!req.body.id) {
-    res.status(400).send({
-      message:`por favor ingresa un id`
-    })
-  }
-   else if (!req.body.businessName){
-     res.status(400).send({
-      message: `por favor ingresa tu nombre!`
-       }) 
-  }
-  else if (!req.body.email){
-    res.status(400).send({
-     message: `por favor ingresa tu email!`
-      }) 
- }
- else if (!req.body.phone){
-  res.status(400).send({
-   message: `por favor ingresa tu telefono!`
-    }) 
-}
-else if (!req.body.adress){
-  res.status(400).send({
-   message: `por favor ingresa tu direccion!`
-    }) 
-}
-else if (!req.body.boilersAmount){
-  res.status(400).send({
-   message: `por favor ingresa una cantidad de calderas!`
-    }) 
-} 
-else if (!req.body.boilersType){
-  res.status(400).send({
-   message: `por favor ingresa un tipo de caldera`
-    }) 
-} 
-else if (!req.body.boilersId){
-  res.status(400).send({
-   message: `por favor ingresa un id de caldera!`
-    }) 
-} 
 
-  const id = req.body.id
-  const businessName = req.body.businessName
-  const email = req.body.email
-  const phone = req.body.phone
-  const adress = req.body.adress
-  const boilersAmount = req.body.boilersAmount
-  const boilersType = req.body.boilersType
-  const boilersId = req.body.boilersId
+if (!req.body.id || !req.body.businessName || 
+  !req.body.email || !req.body.phone || !req.body.adress 
+  || !req.body.boilersAmount || !req.body.boilersType 
+  || !req.body.boilersId){
+  res.status(400).send({
+  message: `please complete all the fields!`
+   }) 
+  } 
+
+  const id = req.body.id;
+  const businessName = req.body.businessName;
+  const email = req.body.email;
+  const phone = req.body.phone;
+  const adress = req.body.adress;
+  const boilersAmount = req.body.boilersAmount;
+  const boilersType = req.body.boilersType;
+  const boilersId = req.body.boilersId;
+
+  validateId (res,id);
+  validateBusinessName(res,businessName);
+  validateEmail(res,email);
+  validatePhone(res,phone);
+  validateAdress(res,adress);
+  validateBoilerAmount(res,boilersAmount);
+  validateBoilersType(res,boilersType);
+  validateBoilersId(res,boilersId);
+
+
 
   //create a building
     const newBuilding = new Building({
