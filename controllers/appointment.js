@@ -1,22 +1,85 @@
 const db = require("../models");
 const Appointment = db.appointment;
 
+//Validation Fields
+  //Validate Id
+  const validateId = (res, id) => {
+    if (isNaN(id)) {
+      return res.status(400).send({
+        message: "Write a valid Id",
+      });
+    }
+    return true;
+  };
+  //validate BuildingId
+  const validateBuildingId = (res, buildingId) => {
+
+    if (buildingId < 1 || buildingId > 100) {
+      return res.status(400).send({
+        message: `The building type does not exist!`,
+      });
+    }
+    return true;
+  };
+  //validate Boiler ID
+  const validateBoilerId = (res, boilerId) => {
+
+    if (boilerId < 1 || boilerId > 100) {
+      return res.status(400).send({
+        message: `The boiler type does not exist!`,
+      });
+    }
+    return true;
+  };
+  //validate Start Timestamp
+  const validateStartTimestamp = (res, start_timestamp) => {
+    const lettersAmount = start_timestamp.length;
+    if (lettersAmount < 1) {
+      return res.status(400).send({
+        message: `The Start Timestamp cannot be empty`,
+      });
+    }
+    return true;
+  };
+    //validate End Timestamp
+    const validateEndTimestamp = (res, end_timestamp) => {
+      const lettersAmount = end_timestamp.length;
+      if (lettersAmount < 1) {
+        return res.status(400).send({
+          message: `The End Timestamp cannot be empty`,
+        });
+      }
+      return true;
+    };
+
 //Create and save a new appointment
 exports.create = (req, res) => {
   //Valdiate Request
   if (!req.body.id || !req.body.buildingId || !req.body.boilerId || !req.body.start_timestamp || !req.body.end_timestamp) {
     return res.status(400).send({
-      message: `Content cannot be empty!`
+      message: `Content cannot be empty any field!`
     })
   }
+   //validate request
+  const id = req.body.id;
+  const buildingId = req.body.buildingId;
+  const boilerId = req.body.boilerId;
+  const start_timestamp = req.body.start_timestamp;
+  const end_timestamp = req.body.end_timestamp;
+
+  validateId (res,id);
+  validateBuildingId(res,buildingId);
+  validateBoilerId(res,boilerId);
+  validateStartTimestamp(res,start_timestamp);
+  validateEndTimestamp(res,end_timestamp);
 
   //Create an Appointment
   const newAppointment = new Appointment({
-    id: req.body.id,
-    buildingId: req.body.buildingId,
-    boilerId: req.body.boilerId,
-    start_timestamp: req.body.start_timestamp,
-    end_timestamp: req.body.end_timestamp
+    id: id,
+    buildingId: buildingId,
+    boilerId: boilerId,
+    start_timestamp: start_timestamp,
+    end_timestamp: end_timestamp
   });
 
   //Save appointments in the database
