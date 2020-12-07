@@ -1,40 +1,63 @@
 const db = require("../models");
 const Technician = db.technician;
 
-  //Create and save a new technician
-  exports.create = (req, res) => {
-
-    //Validate Request
-    if (!req.body.id || !req.body.firstName || !req.body.lastName || !req.body.email || !req.body.typeIds || !req.body.skillsId || !req.body.hour_rate || !req.body.daily_capacity) {
-      return res.status(400).send({
-        message: `Content cannot be empty!`
-      })
-    }
-
-    //Create an Technician
-    const newTechnician = new Technician({
-      id: req.body.id,
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      email: req.body.email,
-      typeIds: req.body.typeIds,
-      skillsId: req.body.skillsId,
-      hour_rate: req.body.hour_rate,
-      daily_capacity: req.body.daily_capacity
+const validateId = (id, res) => {
+  if (isNaN(id)) {
+    return res.status(400).send({
+      message: `Invalid ID`,
     });
+  }
+  return true;
+};
 
-    //Save technicians in the database
-    newTechnician
-      .save(newTechnician)
-      .then(data => {
-        res.send(data);
-      })
-      .catch(err => {
-        res.status(500).send({
-          message: err.message || "Some error occurred while creting the technician"
-        });
-      });
-  };
+const validateFirstName = (firstName, res)=> {
+  if (firstName.length < 3) {
+    return res.status(400).send({
+      message: `The first name must contain at least 3 letters`,
+    });
+  }
+  return true;
+};
+
+const validateLastName = (lastName, res) => {
+  if (lastName.length < 3) {
+    return res.status(400).send({
+      message: `The last name must contain at least 3 letters`,
+    });
+  }
+  return true;
+};
+
+/* const validateEmail = (email, res) => {
+
+}*/
+
+/* const validateTypeIds = (typeIds, res) => {
+
+}*/
+
+/* const validateSkillsId = (skillsId, res) => {
+
+}*/
+
+
+const validateHour_Rate = (hour_rate, res) => {
+  if (hour_rate < 0 || hour_rate > 50) {
+    return res.status(400).send({
+      message: `The hour rate is invalid. Please enter a number between 0 - 50`,
+    });
+  }
+  return true;
+};
+
+const validateDaily_Capacity = (daily_capacity, res) => {
+  if (daily_capacity < 0 || daily_capacity > 8) {
+    return res.status(400).send({
+      message: `The daily capacity is invalid. Please enter a number between 0 - 8`,
+    });
+  }
+  return true;
+};
 
   //Retrieve all technicians from database
   exports.findAll = (req, res) => {
@@ -49,8 +72,86 @@ const Technician = db.technician;
       });
   };
 
+  //Create a new technician
+  exports.create = (req, res) => {
+
+    if (!req.body.id || !req.body.firstName || !req.body.lastName || !req.body.email || !req.body.typeIds || !req.body.skillsId || !req.body.hour_rate || !req.body.daily_capacity) {
+      return res.status(400).send({
+        message: `Content cannot be empty!`
+      })
+    }
+
+    const {
+      id,
+      firstName,
+      lastName,
+      email,
+      typeIds,
+      skillsId,
+      hour_rate,
+      daily_capacity,
+    } = req.body;
+
+    validateId(id, res);
+
+    Technician.findOne({ id: id })
+    .then((data) => {
+      if (data) {
+        return res.status(404).send({
+          message: `Technician with id ${id} already exist`,
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Error server",
+      });
+    });
+
+    validateFirstName(firstName, res);
+    validateLastName(lastName, res);
+    validateEmail(email, res);
+    validateTypeIds(typeIds, res);
+    validateSkillsId(skillsId, res);
+    validateHour_Rate(hour_rate, res);
+    validateDaily_Capacity(daily_capacity, res);
+
+    const newTechnician = new Technician({
+      id: id,
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      typeIds: typeIds,
+      skillsId: skillsId,
+      hour_rate: hour_rate,
+      daily_capacity: daily_capacity,
+    });
+
+    newTechnician
+      .save(newTechnician)
+      .then(data => {
+        res.send(data);
+      })
+      .catch(err => {
+        res.status(500).send({
+          message: err.message || "Some error occurred while creting the technician"
+        });
+      });
+  };
+
+
+
   //Find a single technician with the id
   exports.findOne = (req, res) => {
+
+    if (!req.params.id) {
+      return res.status(400).send({
+        message: `Content cannot be empty!`,
+      });
+    }
+
+    validateId(req.params.id, res);
+
     Technician.findOne({
         id: req.params.id
       })
@@ -71,6 +172,15 @@ const Technician = db.technician;
 
   //Retrieve a single technician by Last Name
   exports.findOneLastName = (req, res) => {
+
+    if (!req.params.lastName) {
+      return res.status(400).send({
+        message: `Content cannot be empty!`,
+      });
+    }
+
+    validateLastName(req.params.lastName, res);
+
     Technician.findOne({lastName: req.params.lastName})
     .then(data => {
       if(!data){
@@ -88,10 +198,9 @@ const Technician = db.technician;
     })
   },
 
-  //Update an Technicians by the id in the request
+  //Update an Technicians by the id
   exports.update = (req, res) => {
    
-    //Validate Request
     if (!req.body.id || !req.body.firstName || !req.body.lastName || !req.body.email || !req.body.typeIds || !req.body.skillsId || !req.body.hour_rate || !req.body.daily_capacity) {
       return res.status(400).send({
         message: `Content cannot be empty!2`
@@ -120,7 +229,15 @@ const Technician = db.technician;
   }
   //Delete an Technician with the specified id in the request
   exports.delete = (req, res) => {
-    const id = req.params.id;
+
+    if (!req.params.id) {
+      return res.status(400).send({
+        message: `Content cannot be empty!`,
+      });
+    }
+  
+    validateId(req.params.id);
+    
     Technician.findOneAndRemove({
         id
       }, {
