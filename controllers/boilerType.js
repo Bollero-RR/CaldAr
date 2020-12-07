@@ -2,18 +2,18 @@ const db = require("../models");
 const BoilerType = db.boilerType;
 
 //validation ID
-const validationId = (id) => {
+const validationId = (res, id) => {
   if (isNaN(id)) {
     return res.status(400).send({
-      message: "the id is invalid",
+      message: `the id is invalid`,
     });
   }
   return true;
 };
 
 //validation boiler type
-const validationType = (type) => {
-  if (type < 1 || type > 5) {
+const validationType = (res, type) => {
+  if (type < 1 || type > 4) {
     return res.status(400).send({
       message: "the type of boiler entered does not exist",
     });
@@ -22,7 +22,7 @@ const validationType = (type) => {
 };
 
 //validation stock
-const validationStock = (stock) => {
+const validationStock = (res, stock) => {
   if (stock < 1) {
     return res.status(400).send({
       message:
@@ -33,8 +33,8 @@ const validationStock = (stock) => {
 };
 
 //validation skilleId
-const validationSkillId = (skillId) => {
-  if (Number.isInteger(id)) {
+const validationSkillId = (res, skillId) => {
+  if (isNaN(skillId)) {
     return res.status(400).send({
       message: "the skill id is invalid",
     });
@@ -71,10 +71,10 @@ exports.create = (req, res) => {
 
   const { id, type, stock, description, skillId } = req.body;
 
-  validationId(id);
-  validationType(type);
-  validationStock(stock);
-  validationSkillId(skillId);
+  validationId(res, id);
+  validationType(res, type);
+  validationStock(res, stock);
+  validationSkillId(res, skillId);
 
   const newBoilerType = new BoilerType({
     id,
@@ -84,30 +84,26 @@ exports.create = (req, res) => {
     skillId,
   });
 
-  newBoilerType
-    .save(newBoilerType)
-    .then((data) => {
-      //console.log('==Create Data==>', data);
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while creating the boiler type",
+  if(validationId (res, id) && validationType(res, type) &&  validationStock(res, stock) && validationSkillId(res, skillId)){
+    newBoilerType
+      .save(newBoilerType)
+      .then((data) => {
+        
+        console.log('==Create Data==>', data);
+        res.send(data);
+      })
+      .catch((err) => {
+        res.status(500).send({
+          message:
+            err.message || "Some error occurred while creating the boiler type",
+        });
       });
-    });
+  }
 };
 
 //Get single boiler type
 exports.findOneType = (req, res) => {
-  if (!req.body.type) {
-    return res.status(400).send({
-      message: "it cannot be empty!",
-    });
-  }
-
-  validationType(type);
-
+ 
   BoilerType.findOne({ type: req.params.type })
     .then((data) => {
       if (!data) {
@@ -127,14 +123,6 @@ exports.findOneType = (req, res) => {
 
 //Get single id
 exports.findOneId = (req, res) => {
-  if (!req.body.id) {
-    return res.status(400).send({
-      message: "it cannot be empty!",
-    });
-  }
-
-  validationId(id);
-
   BoilerType.findOne({ id: req.params.id })
     .then((data) => {
       if (!data) {
@@ -168,10 +156,10 @@ exports.update = (req, res) => {
 
   const { id, type, stock, description, skillId } = req.body;
 
-  validationId(id);
-  validationType(type);
-  validationStock(stock);
-  validationSkillId(skillId);
+  validationId(res, id);
+  validationType(res, type);
+  validationStock(res, stock);
+  validationSkillId(res, skillId);
 
   BoilerType.findOneAndUpdate({ id: req.params.id }, req.body, {
     useFindAndModify: false,
@@ -190,13 +178,6 @@ exports.update = (req, res) => {
 
 //Delete boiler
 exports.delete = (req, res) => {
-  if (!req.body.id) {
-    return res.status(400).send({
-      message: "it cannot be empty!",
-    });
-  }
-
-  validationId(id);
 
   const id = req.params.id;
 
