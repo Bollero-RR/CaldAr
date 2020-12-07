@@ -34,9 +34,9 @@ const Appointment = db.appointment;
   //validate Start Timestamp
   const validateStartTimestamp = (res, start_timestamp) => {
     const lettersAmount = start_timestamp.length;
-    if (lettersAmount < 1) {
+    if (lettersAmount < 5) {
       return res.status(400).send({
-        message: `The Start Timestamp cannot be empty`,
+        message: `The Start Timestamp is not valid`,
       });
     }
     return true;
@@ -44,9 +44,9 @@ const Appointment = db.appointment;
     //validate End Timestamp
     const validateEndTimestamp = (res, end_timestamp) => {
       const lettersAmount = end_timestamp.length;
-      if (lettersAmount < 1) {
+      if (lettersAmount < 5) {
         return res.status(400).send({
-          message: `The End Timestamp cannot be empty`,
+          message: `The End Timestamp is not valid`,
         });
       }
       return true;
@@ -61,11 +61,13 @@ exports.create = (req, res) => {
     })
   }
    //validate request
-  const id = req.body.id;
-  const buildingId = req.body.buildingId;
-  const boilerId = req.body.boilerId;
-  const start_timestamp = req.body.start_timestamp;
-  const end_timestamp = req.body.end_timestamp;
+   const {
+    id,
+    buildingId,
+    boilerId,
+    start_timestamp,
+    end_timestamp,
+  } = req.body;
 
   validateId (res,id);
   validateBuildingId(res,buildingId);
@@ -83,6 +85,7 @@ exports.create = (req, res) => {
   });
 
   //Save appointments in the database
+  if(validateId (res,id) && validateBuildingId(res,buildingId) &&  validateBoilerId(res,boilerId) && validateStartTimestamp(res,start_timestamp) && validateEndTimestamp(res,end_timestamp)){
   newAppointment
     .save(newAppointment)
     .then(data => {
@@ -93,6 +96,7 @@ exports.create = (req, res) => {
         message: err.message || "Some error occurred while creting the appointment"
       });
     });
+  }
 };
 
 //Retrieve all appointments from database
