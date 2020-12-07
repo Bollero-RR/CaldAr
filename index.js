@@ -6,7 +6,7 @@ const db = require("./models");
 const router = require("./routes");
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(router);
 
@@ -26,10 +26,3 @@ db.mongoose
 const PORT = process.env.PORT || 2000;
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
-
-
-
-
-
-
-  

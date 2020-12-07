@@ -1,4 +1,3 @@
-  
 const boilerType = require("../controllers/boilerType");
 var router = require("express").Router();
 
@@ -9,4 +8,3 @@ router.get("/:id", boilerType.findOneId);
 router.put("/:id", boilerType.update);
 router.delete("/:id", boilerType.delete);
 module.exports = router;
-

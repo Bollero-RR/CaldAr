@@ -18,15 +18,20 @@ router.get("/:id", (req, res) => {
   }
 });
 
-
 //Get type boiler
 router.get("/typeId/:id", (req, res) => {
-  const found = boilers.some((boiler) => boiler.typeId === parseInt(req.params.id));
+  const found = boilers.some(
+    (boiler) => boiler.typeId === parseInt(req.params.id)
+  );
 
   if (found) {
-    res.json(boilers.filter((boiler) => boiler.typeId === parseInt(req.params.id)));
+    res.json(
+      boilers.filter((boiler) => boiler.typeId === parseInt(req.params.id))
+    );
   } else {
-    res.status(400).json({ msg: `No boiler with the type of ${req.params.id}` });
+    res
+      .status(400)
+      .json({ msg: `No boiler with the type of ${req.params.id}` });
   }
 });
 
