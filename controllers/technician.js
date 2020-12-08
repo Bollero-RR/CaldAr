@@ -1,5 +1,7 @@
+const e = require("express");
 const db = require("../models");
 const Technician = db.technician;
+const errEmail = new RegExp(/^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i)
 
 const validateId = (id, res) => {
   if (isNaN(id)) {
@@ -28,18 +30,14 @@ const validateLastName = (lastName, res) => {
   return true;
 };
 
-/* const validateEmail = (email, res) => {
-
-}*/
-
-/* const validateTypeIds = (typeIds, res) => {
-
-}*/
-
-/* const validateSkillsId = (skillsId, res) => {
-
-}*/
-
+const validateEmail = (email, res) => {
+  if (!errEmail.test(email.value)) {
+    return res.status(400).send({
+      message: `Email error. Please enter a valid email`,
+    });
+  }
+  return true;
+};
 
 const validateHour_Rate = (hour_rate, res) => {
   if (hour_rate < 0 || hour_rate > 50) {
@@ -59,7 +57,7 @@ const validateDaily_Capacity = (daily_capacity, res) => {
   return true;
 };
 
-  //Retrieve all technicians from database
+  // Retrieve all technicians
   exports.findAll = (req, res) => {
     Technician.find({})
       .then(data => {
@@ -72,7 +70,7 @@ const validateDaily_Capacity = (daily_capacity, res) => {
       });
   };
 
-  //Create a new technician
+  // Create a new technician
   exports.create = (req, res) => {
 
     if (!req.body.id || !req.body.firstName || !req.body.lastName || !req.body.email || !req.body.typeIds || !req.body.skillsId || !req.body.hour_rate || !req.body.daily_capacity) {
@@ -93,26 +91,9 @@ const validateDaily_Capacity = (daily_capacity, res) => {
     } = req.body;
 
     validateId(id, res);
-
-    Technician.findOne({ id: id })
-    .then((data) => {
-      if (data) {
-        return res.status(404).send({
-          message: `Technician with id ${id} already exist`,
-        });
-      }
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Error server",
-      });
-    });
-
     validateFirstName(firstName, res);
     validateLastName(lastName, res);
     validateEmail(email, res);
-    validateTypeIds(typeIds, res);
-    validateSkillsId(skillsId, res);
     validateHour_Rate(hour_rate, res);
     validateDaily_Capacity(daily_capacity, res);
 
@@ -127,21 +108,21 @@ const validateDaily_Capacity = (daily_capacity, res) => {
       daily_capacity: daily_capacity,
     });
 
-    newTechnician
-      .save(newTechnician)
-      .then(data => {
-        res.send(data);
-      })
-      .catch(err => {
-        res.status(500).send({
-          message: err.message || "Some error occurred while creting the technician"
+    if(validateId (id,res) && validateFirstName(firstName, res) &&  validateLastName(lastName, res) && validateEmail(email, res) && validateHour_Rate(hour_rate, res) && validateDaily_Capacity(daily_capacity, res)){
+      newAppointment
+        .save(newAppointment)
+        .then(data => {
+          res.send(data);
+        })
+        .catch(err => {
+          res.status(500).send({
+            message: err.message || "Some error occurred while creting the appointment"
+          });
         });
-      });
+    }
   };
 
-
-
-  //Find a single technician with the id
+  // Retrieve a single technician by id
   exports.findOne = (req, res) => {
 
     if (!req.params.id) {
@@ -149,8 +130,6 @@ const validateDaily_Capacity = (daily_capacity, res) => {
         message: `Content cannot be empty!`,
       });
     }
-
-    validateId(req.params.id, res);
 
     Technician.findOne({
         id: req.params.id
@@ -170,7 +149,7 @@ const validateDaily_Capacity = (daily_capacity, res) => {
       })
   };
 
-  //Retrieve a single technician by Last Name
+  // Retrieve a single technician by Last Name
   exports.findOneLastName = (req, res) => {
 
     if (!req.params.lastName) {
@@ -178,8 +157,6 @@ const validateDaily_Capacity = (daily_capacity, res) => {
         message: `Content cannot be empty!`,
       });
     }
-
-    validateLastName(req.params.lastName, res);
 
     Technician.findOne({lastName: req.params.lastName})
     .then(data => {
@@ -198,8 +175,14 @@ const validateDaily_Capacity = (daily_capacity, res) => {
     })
   },
 
-  //Update an Technicians by the id
+  // Update a Technician by id
   exports.update = (req, res) => {
+
+    if (!req.body){
+      return res.status(400).send({
+        message: "data to update can not be empty!"
+      })
+    }
    
     if (!req.body.id || !req.body.firstName || !req.body.lastName || !req.body.email || !req.body.typeIds || !req.body.skillsId || !req.body.hour_rate || !req.body.daily_capacity) {
       return res.status(400).send({
@@ -207,6 +190,7 @@ const validateDaily_Capacity = (daily_capacity, res) => {
       });
     }
     const id = req.params.id;
+
     Technician.findOneAndUpdate({
         id
       }, req.body, {
@@ -227,7 +211,7 @@ const validateDaily_Capacity = (daily_capacity, res) => {
         });
       });
   }
-  //Delete an Technician with the specified id in the request
+  // Delete a Technician 
   exports.delete = (req, res) => {
 
     if (!req.params.id) {
@@ -236,7 +220,7 @@ const validateDaily_Capacity = (daily_capacity, res) => {
       });
     }
   
-    validateId(req.params.id);
+    const id = req.params.id;
     
     Technician.findOneAndRemove({
         id
@@ -249,7 +233,7 @@ const validateDaily_Capacity = (daily_capacity, res) => {
             message: `Cannot delete technician with the id: " ${id} ". Maybe the technician was not found!`
           });
         } else res.send({
-          message: "Technician was update successfully."
+          message: `Technician with the id: " ${id} " was delete successfully.`
         })
       })
       .catch(err => {
