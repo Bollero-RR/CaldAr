@@ -67,8 +67,6 @@ exports.create = (req, res) => {
     newBoilerType
       .save(newBoilerType)
       .then((data) => {
-        
-        //console.log('==Create Data==>', data);
         res.send(data);
       })
       .catch((err) => {
@@ -93,28 +91,13 @@ exports.update = (req, res) => {
     });
   }
 
-  const { id, type, stock, description, skillsId } = req.body;
+  const {type, stock, description, skillsId } = req.body;
   
-  BoilerType.findOne({ _id: req.params.id })
-  .then((data) => {
-    if (!data) {
-      return res.status(404).send({
-        message: `boiler type with id ${id} doesn't exist`,
-      });
-    }
-  })
-  .catch((err) => {
-    res.status(500).send({
-      message: err.message || "Some error",
-    });
-  });
-
   validationType(res, type);
   validationStock(res, stock);
 
   BoilerType.findOneAndUpdate( { _id:req.params.id }, req.body, {useFindAndModify: false})
     .then((data) => {
-      //console.log('==update Data==>', data);
       res.send({ message: "boiler type was updated" });
     })
     .catch((err) => {
