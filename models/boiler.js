@@ -3,8 +3,7 @@ module.exports = (mongoose) => {
     "boilers",
     mongoose.Schema(
       {
-        id: Number,
-        typeId: Number,
+        typeId: { type: mongoose.Schema.Types.ObjectId },
         maintainceRate: String,
         hourMaintainceCost: Number,
         hourEventualCost: Number,

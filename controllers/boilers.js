@@ -1,25 +1,6 @@
 const db = require("../models");
 const Boiler = db.boilers;
 
-const validateId = (id, res) => {
-  if (isNaN(id)) {
-    return res.status(400).send({
-      message: `The id is invalid!`,
-    });
-  }
-  return true;
-};
-
-const validateTypeId = (typeId ,res) => {
-  //search types boilers
-  if (typeId < 1 && typeId > 4) {
-    return res.status(400).send({
-      message: `The type of boiler does not exist!`,
-    });
-  }
-  return true;
-};
-
 const validateMaintainceRate = (rate, res) => {
   if (rate !== "quarterly" && rate !== "monthly" && rate !== "yearly") {
     return res.status(400).send({
@@ -61,7 +42,6 @@ exports.findAll = (req, res) => {
 //Create Boiler
 exports.create = (req, res) => {
   if (
-    !req.body.id ||
     !req.body.typeId ||
     !req.body.maintainceRate ||
     !req.body.hourMaintainceCost ||
@@ -73,36 +53,17 @@ exports.create = (req, res) => {
   }
 
   const {
-    id,
     typeId,
     maintainceRate,
     hourMaintainceCost,
     hourEventualCost,
   } = req.body;
 
-  validateId(id, res);
-
-  Boiler.findOne({ id: id })
-  .then((data) => {
-    if (data) {
-      return res.status(404).send({
-        message: `Boiler with id ${id} was exist`,
-      });
-    }
-  })
-  .catch((err) => {
-    res.status(500).send({
-      message: err.message || "Some error",
-    });
-  });
-
-  validateTypeId(typeId, res);
   validateMaintainceRate(maintainceRate, res);
   validateHourMaintainceCost(hourMaintainceCost, res);
   validateHourEventualCost(hourEventualCost, res);
 
   const newBoiler = new Boiler({
-    id: id,
     typeId: typeId,
     maintainceRate: maintainceRate,
     hourMaintainceCost: hourMaintainceCost,
@@ -121,19 +82,11 @@ exports.create = (req, res) => {
 
 //Get single Boiler
 exports.findOne = (req, res) => {
-  if (!req.params.id) {
-    return res.status(400).send({
-      message: `Content cannot be empty!`,
-    });
-  }
-
-  validateId(req.params.id, res);
-
-  Boiler.findOne({ id: req.params.id })
+  Boiler.findOne({ _id: req.params.id })
     .then((data) => {
       if (!data) {
         return res.status(404).send({
-          message: `Boiler with id ${req.params.id} was not exist`,
+          message: `Boiler with id ${req.params.id} does not exist`,
         });
       }
       res.send(data);
@@ -147,19 +100,11 @@ exports.findOne = (req, res) => {
 
 //Get single Boiler for type
 exports.findOneType = (req, res) => {
-  if (!req.params.type) {
-    return res.status(400).send({
-      message: `Content cannot be empty!`,
-    });
-  }
-
-  validateTypeId(req.params.type, res);
-
   Boiler.findOne({ typeId: req.params.type })
     .then((data) => {
       if (!data) {
         return res.status(404).send({
-          message: `Boiler with Type id ${req.params.type} was not found`,
+          message: `Boiler with Type id ${req.params.type} does not exist`,
         });
       }
       res.send(data);
@@ -185,36 +130,25 @@ exports.update = (req, res) => {
     });
   }
 
-  const {
-    id,
-    typeId,
-    maintainceRate,
-    hourMaintainceCost,
-    hourEventualCost,
-  } = req.body;
-
-  validateId(id, res);
-
-  Boiler.findOne({ id: id })
-  .then((data) => {
-    if (!data) {
-      return res.status(404).send({
-        message: `Boiler with id ${id} was not exist`,
+  Boiler.findOne({ _id: req.body.id })
+    .then((data) => {
+      if (!data) {
+        return res.status(404).send({
+          message: `Boiler with id ${req.body.id} does not exist`,
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Some error",
       });
-    }
-  })
-  .catch((err) => {
-    res.status(500).send({
-      message: err.message || "Some error",
     });
-  });
 
-  validateTypeId(typeId, res);
-  validateMaintainceRate(maintainceRate, res);
-  validateHourMaintainceCost(hourMaintainceCost, res);
-  validateHourEventualCost(hourEventualCost, res);
+  validateMaintainceRate(req.body.maintainceRate, res);
+  validateHourMaintainceCost(req.body.hourMaintainceCost, res);
+  validateHourEventualCost(req.body.hourEventualCost, res);
 
-  Boiler.findOneAndUpdate({ id: id }, req.body, { useFindAndModify: false })
+  Boiler.findOneAndUpdate({ _id: req.body.id }, req.body, { useFindAndModify: false })
     .then((data) => res.send({ message: `Boiler was updated` }))
     .catch((err) => {
       res.status(500).send({
@@ -225,15 +159,7 @@ exports.update = (req, res) => {
 
 //Delete boiler
 exports.delete = (req, res) => {
-  if (!req.params.id) {
-    return res.status(400).send({
-      message: `Content cannot be empty!`,
-    });
-  }
-
-  validateId(req.params.id);
-
-  Boiler.findOneAndRemove({ id: req.params.id }, { useFindAndModify: false })
+  Boiler.findOneAndRemove({ _id: req.params.id }, { useFindAndModify: false })
     .then((data) => res.send({ message: `Boiler was removed` }))
     .catch((err) => {
       res.status(500).send({
