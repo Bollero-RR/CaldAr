@@ -4,14 +4,13 @@ module.exports = mongoose =>{
         "building",
         mongoose.Schema(
             {
-                id: Number,
                 businessName: String,
                 email: String,
                 adress: String,
                 phone: Number,
                 boilersAmount: Number,
-                boilersType: String,
-                boilersId: Array
+                boilersType: [{type: String}],
+                boilersId: [{type: mongoose.Schema.types.ObjectId}]
             },
             {timestamps:true }
         )
