@@ -76,7 +76,8 @@ exports.create = (req, res) => {
 if (!req.body.businessName || 
   !req.body.email ||
    !req.body.phone || 
-   !req.body.adress 
+   !req.body.adress ||
+   !req.body.boilersId
    ){
   res.status(400).send({
   message: `please complete all the fields!`
@@ -95,10 +96,11 @@ if (!req.body.businessName ||
   
   //create a building
     const newBuilding = new Building({
-    businessName:businessName,
-    email:email,
-    adress: adress,
-    phone:phone,
+      businessName,
+      email,
+      adress,
+      phone,
+      boilersId
   })
 
   //save building in the DB
@@ -184,19 +186,6 @@ exports.update = (req, res) =>{
   const phone = req.body.phone;
   const adress = req.body.adress;
   
-  Building.findOne({_id: req.params.id})
-  .then((data) => {
-    if (!data) {
-      return res.status(404).send({
-        message: `Building with id ${id} does not exist`,
-      });
-    }
-  })
-  .catch((err) => {
-    res.status(500).send({
-      message: err.message || "Internal server error",
-    });
-  });
   validateBusinessName(res,businessName);
   validateEmail(res,email);
   validatePhone(res,phone);
@@ -209,6 +198,11 @@ exports.update = (req, res) =>{
           message:'Cannot update building with id=${id}. Maybe building was not found'})
       } else res.status(200).send({message: "building was update succesfully."});
   })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Internal server error",
+      });
+    });
 };
 
 //delete a building 
