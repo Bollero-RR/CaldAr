@@ -3,15 +3,6 @@ const db = require("../models");
 const Technician = db.technician;
 const errEmail = new RegExp(/^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i)
 
-const validateId = (id, res) => {
-  if (isNaN(id)) {
-    return res.status(400).send({
-      message: `Invalid ID`,
-    });
-  }
-  return true;
-};
-
 const validateFirstName = (firstName, res)=> {
   if (firstName.length < 3) {
     return res.status(400).send({
@@ -73,14 +64,13 @@ const validateDaily_Capacity = (daily_capacity, res) => {
   // Create a new technician
   exports.create = (req, res) => {
 
-    if (!req.body.id || !req.body.firstName || !req.body.lastName || !req.body.email || !req.body.typeIds || !req.body.skillsId || !req.body.hour_rate || !req.body.daily_capacity) {
+    if (!req.body.firstName || !req.body.lastName || !req.body.email || !req.body.hour_rate || !req.body.daily_capacity) {
       return res.status(400).send({
         message: `Content cannot be empty!`
       })
     }
 
     const {
-      id,
       firstName,
       lastName,
       email,
@@ -90,7 +80,6 @@ const validateDaily_Capacity = (daily_capacity, res) => {
       daily_capacity,
     } = req.body;
 
-    validateId(id, res);
     validateFirstName(firstName, res);
     validateLastName(lastName, res);
     validateEmail(email, res);
@@ -98,7 +87,6 @@ const validateDaily_Capacity = (daily_capacity, res) => {
     validateDaily_Capacity(daily_capacity, res);
 
     const newTechnician = new Technician({
-      id: id,
       firstName: firstName,
       lastName: lastName,
       email: email,
@@ -108,7 +96,7 @@ const validateDaily_Capacity = (daily_capacity, res) => {
       daily_capacity: daily_capacity,
     });
 
-    if(validateId (id,res) && validateFirstName(firstName, res) &&  validateLastName(lastName, res) && validateEmail(email, res) && validateHour_Rate(hour_rate, res) && validateDaily_Capacity(daily_capacity, res)){
+    if(validateFirstName(firstName, res) &&  validateLastName(lastName, res) && validateEmail(email, res) && validateHour_Rate(hour_rate, res) && validateDaily_Capacity(daily_capacity, res)){
       newAppointment
         .save(newAppointment)
         .then(data => {
