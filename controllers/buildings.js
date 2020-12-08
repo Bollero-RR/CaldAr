@@ -19,16 +19,6 @@ exports.findAll = (req, res) => {
 
 //validate fields
 
-    //validate ID
-    const validateId = (res, id) => {
-      if (isNaN(id)) {
-        return res.status(400).send({
-          message: `please write a valid ID`,
-        });
-      }
-      return true;
-    };
-
     //validate BusinessName
     const validateBusinessName = (res, businessName) => {
       const lettersAmount = businessName.length;
@@ -114,7 +104,7 @@ exports.create = (req, res) => {
 
    //validate request
 
-if (!req.body.id || !req.body.businessName || 
+if (!req.body.businessName || 
   !req.body.email || !req.body.phone || !req.body.adress 
   || !req.body.boilersAmount || !req.body.boilersType 
   || !req.body.boilersId){
@@ -123,7 +113,6 @@ if (!req.body.id || !req.body.businessName ||
    }) 
   } 
 
-  const id = req.body.id;
   const businessName = req.body.businessName;
   const email = req.body.email;
   const phone = req.body.phone;
@@ -132,7 +121,6 @@ if (!req.body.id || !req.body.businessName ||
   const boilersType = req.body.boilersType;
   const boilersId = req.body.boilersId;
 
-  validateId (res,id);
   validateBusinessName(res,businessName);
   validateEmail(res,email);
   validatePhone(res,phone);
@@ -145,7 +133,6 @@ if (!req.body.id || !req.body.businessName ||
 
   //create a building
     const newBuilding = new Building({
-    id: id,
     businessName:businessName,
     email:email,
     adress: adress,
@@ -156,7 +143,7 @@ if (!req.body.id || !req.body.businessName ||
   })
 
   //save building in the DB
-  if (validateId (res,id)&& 
+  if (
   validateBusinessName(res,businessName)&&
   validateEmail (res,email)&&
   validateAdress (res,adress)&&
@@ -207,7 +194,7 @@ exports.findOne = (req, res) =>{
     });
   };
 
-  Building.findOne({id: req.params.id})
+  Building.findOne({_id: req.params.id})
   .then(data =>{
     if (!data){
       return res.status(404).send({
@@ -233,19 +220,17 @@ exports.update = (req, res) =>{
   }
   //validate request
   if (
-    !req.body.id || 
     !req.body.businessName || 
     !req.body.email || 
     !req.body.phone || 
     !req.body.adress || 
-    !req.body.boilersAmount 
-    || !req.body.boilersType 
-    || !req.body.boilersId
+    !req.body.boilersAmount ||
+    !req.body.boilersType ||
+     !req.body.boilersId
     ){
-   return res.status(400).send({ message: "content can not b empty"
+   return res.status(400).send({ message: "content can not be empty"
   });
   }
-  const id = req.params.id;
   const businessName = req.body.businessName;
   const email = req.body.email;
   const phone = req.body.phone;
@@ -254,7 +239,7 @@ exports.update = (req, res) =>{
   const boilersType = req.body.boilersType;
   const boilersId = req.body.boilersId;
   
-  Building.findOne({ id: id })
+  Building.findOne({_id: req.params.id})
   .then((data) => {
     if (!data) {
       return res.status(404).send({
@@ -267,7 +252,6 @@ exports.update = (req, res) =>{
       message: err.message || "Some error",
     });
   });
-  validateId (res,id);
   validateBusinessName(res,businessName);
   validateEmail(res,email);
   validatePhone(res,phone);
@@ -276,7 +260,7 @@ exports.update = (req, res) =>{
   validateBoilersType(res,boilersType);
   validateBoilersId(res,boilersId);
 
-  Building.findOneAndUpdate({id}, req.body,{ useFindAndModify: false })
+  Building.findOneAndUpdate({_id: req.params.id}, req.body,{ useFindAndModify: false })
     .then(data =>{
       if (!data) {
         res.status(400).send({
@@ -294,7 +278,7 @@ if (!req.params.id){
   })
 }
 
-Building.findOneAndRemove({id}, {useFindAndModify: false})
+Building.findOneAndRemove({_id: req.body.id}, {useFindAndModify: false})
   .then((_data) =>
     res.status(200).send({message: "building was removed sucessfully"})
     )
