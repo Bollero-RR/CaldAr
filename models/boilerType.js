@@ -3,11 +3,12 @@ module.exports = (mongoose) => {
     "boilerType",
     mongoose.Schema(
       {
-        id: Number,
         type: Number,
         description: String,
         stock: Number,
-        skillId: Number,
+        skillsId:  [{
+          type: mongoose.Schema.Types.ObjectId.
+          }]
       },
       { timestamps: true }
     )
