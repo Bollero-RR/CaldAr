@@ -119,9 +119,7 @@ const validateDaily_Capacity = (daily_capacity, res) => {
       });
     }
 
-    Technician.findOne({
-        id: req.params.id
-      })
+    Technician.findOne({_id: req.params.id})
       .then(data => {
         if (!data) {
           return res.status(404).send({
@@ -179,11 +177,7 @@ const validateDaily_Capacity = (daily_capacity, res) => {
     }
     const id = req.params.id;
 
-    Technician.findOneAndUpdate({
-        id
-      }, req.body, {
-        useFindAndModify: false
-      })
+    Technician.findOneAndUpdate({_id:id}, req.body, {useFindAndModify: false})
       .then(data => {
         if (!data) {
           res.status(404).send({
@@ -210,11 +204,7 @@ const validateDaily_Capacity = (daily_capacity, res) => {
   
     const id = req.params.id;
     
-    Technician.findOneAndRemove({
-        id
-      }, {
-        useFindAndModify: false
-      })
+    Technician.findOneAndRemove({_id:id}, {useFindAndModify: false})
       .then(data => {
         if (!data) {
           res.status(404).send({
