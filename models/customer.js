@@ -3,10 +3,13 @@ module.exports = (mongoose) => {
     "customer",
     mongoose.Schema(
       {
-        id: Number,
         customerType: String,
         email: String,
-        buildings: Array,
+        buildingsIds: [
+          {
+            type: mongoose.Schema.Types.ObjectId,
+          },
+        ],
         fiscalAddress: String,
       },
       { timestamps: true }

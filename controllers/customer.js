@@ -1,15 +1,6 @@
 const db = require("../models");
 const Customer = db.customer;
 
-const validateId = (id, res) => {
-  if (isNaN(id)) {
-    return res.status(400).send({
-      message: `The id is invalid!`,
-    });
-  }
-  return true;
-};
-
 const validateCustomerType = (type, res) => {
   if (type !== "business" && type !== "particular") {
     return res.status(400).send({
@@ -26,18 +17,6 @@ const validateEmail = (email, res) => {
       message: `The email is invalid!`,
     });
   }
-  return true;
-};
-
-const validateBuildings = (buildings, res) => {
-  buildings.length && buildings.map((building) => {
-    if(!Number.isInteger(building)){
-      //search exist building
-      return res.status(400).send({
-        message: `The content builing is invalid!`,
-      });
-    }
-  });
   return true;
 };
 
@@ -80,10 +59,9 @@ exports.findAll = (req, res) => {
 //Create customer
 exports.create = (req, res) => {
   if (
-    !req.body.id ||
     !req.body.customerType ||
     !req.body.email ||
-    !req.body.buildings ||
+    !req.body.buildingsIds ||
     !req.body.fiscalAddress
   ) {
     return res.status(400).send({
@@ -91,35 +69,16 @@ exports.create = (req, res) => {
     });
   }
 
-  const { id, customerType, email, buildings, fiscalAddress } = req.body;
-
-  validateId(id, res);
-
-  Customer.findOne({ id: id })
-  .then((data) => {
-    if (data) {
-      return res.status(404).send({
-        message: `Customer with id ${id} was exist`,
-      });
-    }
-  })
-  .catch((err) => {
-    res.status(500).send({
-      message: err.message || "Some error",
-    });
-  });
-
+  const { customerType, email, buildingsIds, fiscalAddress } = req.body;
 
   validateCustomerType(customerType, res);
   validateEmail(email, res);
-  validateBuildings(buildings, res);
   validateFiscalAddress(fiscalAddress, res);
 
   const newCustomer = new Customer({
-    id: id,
     customerType: customerType,
     email: email,
-    buildings: buildings,
+    buildingsIds: buildingsIds,
     fiscalAddress: fiscalAddress,
   });
 
@@ -136,13 +95,11 @@ exports.create = (req, res) => {
 //Get single customer
 exports.findOne = (req, res) => {
 
-  validateId(req.params.id, res);
-
-  Customer.findOne({ id: req.params.id })
+  Customer.findOne({ _id: req.params.id })
     .then((data) => {
       if (!data) {
         return res.status(404).send({
-          message: `Customer with id ${req.params.id} was not found`,
+          message: `Customer with id ${req.params.id} does not found`,
         });
       }
       res.send(data);
@@ -163,7 +120,7 @@ exports.findOneEmail = (req, res) => {
     .then((data) => {
       if (!data) {
         return res.status(404).send({
-          message: `Customer with email ${req.params.email} was not found`,
+          message: `Customer with email ${req.params.email} does not found`,
         });
       }
       res.send(data);
@@ -181,6 +138,7 @@ exports.update = (req, res) => {
     !req.body.id ||
     !req.body.customerType ||
     !req.body.email ||
+    !req.body.buildingsIds ||
     !req.body.fiscalAddress
   ) {
     return res.status(400).send({
@@ -188,15 +146,13 @@ exports.update = (req, res) => {
     });
   }
 
-  const { id, customerType, email, buildings, fiscalAddress } = req.body;
+  const { id, customerType, email, fiscalAddress } = req.body;
 
-  validateId(id, res);
-
-  Customer.findOne({ id: id })
+  Customer.findOne({ _id: id })
   .then((data) => {
     if (!data) {
       return res.status(404).send({
-        message: `Customer with id ${id} was not exist`,
+        message: `Customer with id ${id} does not exist`,
       });
     }
   })
@@ -208,10 +164,9 @@ exports.update = (req, res) => {
 
   validateCustomerType(customerType, res);
   validateEmail(email, res);
-  validateBuildings(buildings, res);
   validateFiscalAddress(fiscalAddress, res);
 
-  Customer.findOneAndUpdate({ id: req.body.id }, req.body)
+  Customer.findOneAndUpdate({ _id: req.body.id }, req.body)
     .then((data) => res.send({ message: `Customer was updated` }))
     .catch((err) => {
       res.status(500).send({
@@ -223,9 +178,7 @@ exports.update = (req, res) => {
 //Delete customer
 exports.delete = (req, res) => {
 
-  validateId(req.params.id, res);
-  
-  Customer.findOneAndRemove({ id: req.body.id })
+  Customer.findOneAndRemove({ _id: req.params.id })
     .then((data) => res.send({ message: `Customer was removed` }))
     .catch((err) => {
       res.status(500).send({
