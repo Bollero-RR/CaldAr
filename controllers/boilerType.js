@@ -23,15 +23,6 @@ const validationStock = (res, stock) => {
   return true;
 };
 
-//validation skilleId
-const validationSkillId = (res, skillsId) => {
-  if (isNaN(skillsId)) {
-    return res.status(400).send({
-      message: "the skill id is invalid",
-    });
-  }
-  return true;
-};
 
 //Get all boiler type
 exports.findAll = (req, res) => {
@@ -49,7 +40,6 @@ exports.findAll = (req, res) => {
 //Create boiler type
 exports.create = (req, res) => {
   if (
-    !req.body.id ||
     !req.body.type ||
     !req.body.stock ||
     !req.body.skillsId ||
@@ -60,26 +50,25 @@ exports.create = (req, res) => {
     });
   }
 
-  const { _id, type, stock, description, skillsId } = req.body;
+  const { type, stock, description, skillsId } = req.body;
 
   validationType(res, type);
   validationStock(res, stock);
-  validationSkillId(res, skillsId);
 
   const newBoilerType = new BoilerType({
-    _id,
+  
     type,
     stock,
     description,
-    skillsId,
+    skillsId
   });
 
-  if( validationType(res, type) &&  validationStock(res, stock) && validationSkillId(res, skillsId)){
+  if( validationType(res, type) &&  validationStock(res, stock)){
     newBoilerType
       .save(newBoilerType)
       .then((data) => {
         
-        console.log('==Create Data==>', data);
+        //console.log('==Create Data==>', data);
         res.send(data);
       })
       .catch((err) => {
@@ -89,6 +78,51 @@ exports.create = (req, res) => {
         });
       });
   }
+};
+
+//Update boiler type
+exports.update = (req, res) => {
+  if (
+    !req.body.type ||
+    !req.body.stock ||
+    !req.body.skillsId ||
+    !req.body.description
+  ) {
+    return res.status(400).send({
+      message: "Content cannot be empty!",
+    });
+  }
+
+  const { id, type, stock, description, skillsId } = req.body;
+  
+  BoilerType.findOne({ _id: req.params.id })
+  .then((data) => {
+    if (!data) {
+      return res.status(404).send({
+        message: `boiler type with id ${id} doesn't exist`,
+      });
+    }
+  })
+  .catch((err) => {
+    res.status(500).send({
+      message: err.message || "Some error",
+    });
+  });
+
+  validationType(res, type);
+  validationStock(res, stock);
+
+  BoilerType.findOneAndUpdate( { _id:req.params.id }, req.body, {useFindAndModify: false})
+    .then((data) => {
+      //console.log('==update Data==>', data);
+      res.send({ message: "boiler type was updated" });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while update the  boiler type",
+      });
+    });
 };
 
 //Get single boiler type
@@ -130,40 +164,6 @@ exports.findOneId = (req, res) => {
     });
 };
 
-//Update boiler type
-exports.update = (req, res) => {
-  if (
-    !req.body.id ||
-    !req.body.type ||
-    !req.body.stock ||
-    !req.body.skillsId ||
-    !req.body.description
-  ) {
-    return res.status(400).send({
-      message: "Content cannot be empty!",
-    });
-  }
-
-  const { _id, type, stock, description, skillsId } = req.body;
-
-  validationType(res, type);
-  validationStock(res, stock);
-  validationSkillId(res, skillsId);
-
-  BoilerType.findOneAndUpdate({ id: req.params.id }, req.body, {
-    useFindAndModify: false,
-  })
-    .then((data) => {
-      //console.log('==update Data==>', data);
-      res.send({ message: "boiler type was updated" });
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while update the  boiler type",
-      });
-    });
-};
 
 //Delete boiler
 exports.delete = (req, res) => {
