@@ -44,9 +44,9 @@ exports.findAll = (req, res) => {
 
     //validate phone
     const validatePhone = (res, phone) => {
-      const numberAmount = phone.length;
-      const character = new RegExp('^[+0-9]+[^-_()\\s]$');
-      if (numberAmount <7 || !character.test(phone)) {
+    const numberAmount = phone.length;
+    const character = new RegExp('^[+0-9]+[^-_()\\s]$');
+      if ( numberAmount<7 || !character.test(phone)) {
         return res.status(400).send({
           message: `Number of at least 7 digits, do not accept spaces, hyphens or parentheses`,
         });
@@ -67,37 +67,6 @@ exports.findAll = (req, res) => {
       return true;
     }
 
-    //validate Boilers Amount
-    const validateBoilerAmount = (res, boilersAmount) =>{
-      if (boilersAmount >2){
-        return res.status(400).send({
-          message: `can be only 1 or 2 boilers amount`,
-        });
-      }
-      return true;
-    }
-    //validate Boilers Type
-    const validateBoilersType = (res, boilersType) =>{
-     const letters = lettersEr.test(boilersType)
-      
-      if (!letters){
-        return res.status(400).send({
-          message: `Can be type A, B,C OR D`,
-        });
-      }
-      return true;
-    }
-  
-    //validate Boilers ID
-    const validateBoilersId = (res, boilersId) => {
-
-      if (boilersId < 1 || boilersId > 10) {
-        return res.status(400).send({
-          message: `The type of boiler does not exist!`,
-        });
-      }
-      return true;
-    };
 
 //create & save a new building
 exports.create = (req, res) => {
@@ -105,9 +74,10 @@ exports.create = (req, res) => {
    //validate request
 
 if (!req.body.businessName || 
-  !req.body.email || !req.body.phone || !req.body.adress 
-  || !req.body.boilersAmount || !req.body.boilersType 
-  || !req.body.boilersId){
+  !req.body.email ||
+   !req.body.phone || 
+   !req.body.adress 
+   ){
   res.status(400).send({
   message: `please complete all the fields!`
    }) 
@@ -117,29 +87,18 @@ if (!req.body.businessName ||
   const email = req.body.email;
   const phone = req.body.phone;
   const adress = req.body.adress;
-  const boilersAmount = req.body.boilersAmount;
-  const boilersType = req.body.boilersType;
-  const boilersId = req.body.boilersId;
 
   validateBusinessName(res,businessName);
   validateEmail(res,email);
   validatePhone(res,phone);
   validateAdress(res,adress);
-  validateBoilerAmount(res,boilersAmount);
-  validateBoilersType(res,boilersType);
-  validateBoilersId(res,boilersId);
-
-
-
+  
   //create a building
     const newBuilding = new Building({
     businessName:businessName,
     email:email,
     adress: adress,
     phone:phone,
-    boilersAmount:boilersAmount,
-    boilersType: boilersType,
-    boilersId: boilersId
   })
 
   //save building in the DB
@@ -147,9 +106,7 @@ if (!req.body.businessName ||
   validateBusinessName(res,businessName)&&
   validateEmail (res,email)&&
   validateAdress (res,adress)&&
-  validateBoilerAmount (res,boilersAmount)&&
-  validateBoilersType (res, boilersType)&&
-  validateBoilersId (res, boilersId)
+  validatePhone(res,phone)
   ){
   newBuilding
     .save(newBuilding)
@@ -167,8 +124,11 @@ if (!req.body.businessName ||
 
 //Retrieve a single building by phone
 exports.findOnePhone = (req, res) => {
-
-
+  if (!req.params.phone){
+    return res.status(400).send({
+      message: "phone can not be empty!"
+    });
+  };
   Building.findOne({phone: req.params.phone})
   .then(data => {
     if(!data){
@@ -218,48 +178,30 @@ exports.update = (req, res) =>{
       message: "data to update can not be empty!"
     })
   }
-  //validate request
-  if (
-    !req.body.businessName || 
-    !req.body.email || 
-    !req.body.phone || 
-    !req.body.adress || 
-    !req.body.boilersAmount ||
-    !req.body.boilersType ||
-     !req.body.boilersId
-    ){
-   return res.status(400).send({ message: "content can not be empty"
-  });
-  }
+ 
   const businessName = req.body.businessName;
   const email = req.body.email;
   const phone = req.body.phone;
   const adress = req.body.adress;
-  const boilersAmount = req.body.boilersAmount;
-  const boilersType = req.body.boilersType;
-  const boilersId = req.body.boilersId;
   
   Building.findOne({_id: req.params.id})
   .then((data) => {
     if (!data) {
       return res.status(404).send({
-        message: `Building with id ${id} was not exist`,
+        message: `Building with id ${id} does not exist`,
       });
     }
   })
   .catch((err) => {
     res.status(500).send({
-      message: err.message || "Some error",
+      message: err.message || "Internal server error",
     });
   });
   validateBusinessName(res,businessName);
   validateEmail(res,email);
   validatePhone(res,phone);
   validateAdress(res,adress);
-  validateBoilerAmount(res,boilersAmount);
-  validateBoilersType(res,boilersType);
-  validateBoilersId(res,boilersId);
-
+  
   Building.findOneAndUpdate({_id: req.params.id}, req.body,{ useFindAndModify: false })
     .then(data =>{
       if (!data) {
