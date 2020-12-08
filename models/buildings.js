@@ -8,9 +8,7 @@ module.exports = mongoose =>{
                 email: String,
                 adress: String,
                 phone: Number,
-                boilersAmount: Number,
-                boilersType: [{type: String}],
-                boilersId: [{type: mongoose.Schema.types.ObjectId}]
+                boilersId: [{type: mongoose.Schema.Types.ObjectId}]
             },
             {timestamps:true }
         )
