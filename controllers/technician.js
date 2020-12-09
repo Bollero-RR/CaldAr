@@ -163,14 +163,8 @@ const validateDaily_Capacity = (daily_capacity, res) => {
 
   // Update a Technician by id
   exports.update = (req, res) => {
-
-    if (!req.body){
-      return res.status(400).send({
-        message: "data to update can not be empty!"
-      })
-    }
    
-    if (!req.body.id || !req.body.firstName || !req.body.lastName || !req.body.email || !req.body.typeIds || !req.body.skillsId || !req.body.hour_rate || !req.body.daily_capacity) {
+    if (!req.body.firstName || !req.body.lastName || !req.body.email || !req.body.typeIds || !req.body.skillsId || !req.body.hour_rate || !req.body.daily_capacity) {
       return res.status(400).send({
         message: `Content cannot be empty!2`
       });
@@ -220,3 +214,4 @@ const validateDaily_Capacity = (daily_capacity, res) => {
         });
       });
   };
+  
