@@ -64,10 +64,10 @@ exports.create = (req, res) => {
   validateHourEventualCost(hourEventualCost, res);
 
   const newBoiler = new Boiler({
-    typeId: typeId,
-    maintainceRate: maintainceRate,
-    hourMaintainceCost: hourMaintainceCost,
-    hourEventualCost: hourEventualCost,
+    typeId,
+    maintainceRate,
+    hourMaintainceCost,
+    hourEventualCost,
   });
 
   newBoiler
@@ -86,7 +86,7 @@ exports.findOne = (req, res) => {
     .then((data) => {
       if (!data) {
         return res.status(404).send({
-          message: `Boiler with id ${req.params.id} does not exist`,
+          message: `Boiler with id ${req.params.id} was not exist`,
         });
       }
       res.send(data);
@@ -104,7 +104,7 @@ exports.findOneType = (req, res) => {
     .then((data) => {
       if (!data) {
         return res.status(404).send({
-          message: `Boiler with Type id ${req.params.type} does not exist`,
+          message: `Boiler with Type id ${req.params.type} was not exist`,
         });
       }
       res.send(data);
@@ -119,7 +119,6 @@ exports.findOneType = (req, res) => {
 //Update Boiler
 exports.update = (req, res) => {
   if (
-    !req.body.id ||
     !req.body.typeId ||
     !req.body.maintainceRate ||
     !req.body.hourMaintainceCost ||
@@ -130,25 +129,11 @@ exports.update = (req, res) => {
     });
   }
 
-  Boiler.findOne({ _id: req.body.id })
-    .then((data) => {
-      if (!data) {
-        return res.status(404).send({
-          message: `Boiler with id ${req.body.id} does not exist`,
-        });
-      }
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error",
-      });
-    });
-
   validateMaintainceRate(req.body.maintainceRate, res);
   validateHourMaintainceCost(req.body.hourMaintainceCost, res);
   validateHourEventualCost(req.body.hourEventualCost, res);
 
-  Boiler.findOneAndUpdate({ _id: req.body.id }, req.body, { useFindAndModify: false })
+  Boiler.findOneAndUpdate({ _id: req.params.id }, req.body, { useFindAndModify: false })
     .then((data) => res.send({ message: `Boiler was updated` }))
     .catch((err) => {
       res.status(500).send({
