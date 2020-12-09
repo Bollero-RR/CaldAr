@@ -5,10 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start": "node index",
-    "dev": "nodemon index",
-    "lint": "eslint .",
+    "lint": "eslint",
     "prettier": "prettier --write .",
-    "postinstall": "husky install"
+    "postinstall": "husky install",
+    "dev": "nodemon index"
   },
   "repository": {
     "type": "git",
@@ -24,14 +24,16 @@
     "body-parser": "^1.19.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "lodash.uniq": "^4.5.0",
     "mongodb": "^3.6.3",
-    "mongoose": "^5.11.0",
-    "nodemon": "^2.0.6"
+    "mongoose": "^5.10.18",
+    "prettier": "^2.2.1"
   },
   "devDependencies": {
     "eslint": "^7.15.0",
     "husky": "^5.0.4",
     "lint-staged": "^10.5.3",
+    "nodemon": "^2.0.6",
     "pinst": "^2.1.1",
     "pretty-quick": "^3.1.0"
   },
