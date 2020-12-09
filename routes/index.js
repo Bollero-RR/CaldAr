@@ -1,5 +1,7 @@
-const { route } = require("./boilers");
-const boilerRouter = require("./boilers");
+const { route } = require("./customers");
+const customerRouter = require("./customers");
+
+router.use("/customers", customerRouter);
 
 let router = require("express").Router();
 
