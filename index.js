@@ -1,5 +1,4 @@
-//INIT EXPRESS
-const express = require("express");
+const express = require('express');
 const app = express();
 const bodyParser = require("body-parser");
 const db = require("./models");
