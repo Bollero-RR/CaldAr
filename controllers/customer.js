@@ -76,10 +76,10 @@ exports.create = (req, res) => {
   validateFiscalAddress(fiscalAddress, res);
 
   const newCustomer = new Customer({
-    customerType: customerType,
-    email: email,
-    buildingsIds: buildingsIds,
-    fiscalAddress: fiscalAddress,
+    customerType,
+    email,
+    buildingsIds,
+    fiscalAddress,
   });
 
   newCustomer
@@ -99,7 +99,7 @@ exports.findOne = (req, res) => {
     .then((data) => {
       if (!data) {
         return res.status(404).send({
-          message: `Customer with id ${req.params.id} does not found`,
+          message: `Customer with id ${req.params.id} was not found`,
         });
       }
       res.send(data);
@@ -120,7 +120,7 @@ exports.findOneEmail = (req, res) => {
     .then((data) => {
       if (!data) {
         return res.status(404).send({
-          message: `Customer with email ${req.params.email} does not found`,
+          message: `Customer with email ${req.params.email} was not found`,
         });
       }
       res.send(data);
@@ -135,7 +135,6 @@ exports.findOneEmail = (req, res) => {
 //Update customer
 exports.update = (req, res) => {
   if (
-    !req.body.id ||
     !req.body.customerType ||
     !req.body.email ||
     !req.body.buildingsIds ||
@@ -146,27 +145,11 @@ exports.update = (req, res) => {
     });
   }
 
-  const { id, customerType, email, fiscalAddress } = req.body;
+  validateCustomerType(req.body.customerType, res);
+  validateEmail(req.body.email, res);
+  validateFiscalAddress(req.body.fiscalAddress, res);
 
-  Customer.findOne({ _id: id })
-  .then((data) => {
-    if (!data) {
-      return res.status(404).send({
-        message: `Customer with id ${id} does not exist`,
-      });
-    }
-  })
-  .catch((err) => {
-    res.status(500).send({
-      message: err.message || "Some error",
-    });
-  });
-
-  validateCustomerType(customerType, res);
-  validateEmail(email, res);
-  validateFiscalAddress(fiscalAddress, res);
-
-  Customer.findOneAndUpdate({ _id: req.body.id }, req.body)
+  Customer.findOneAndUpdate({ _id: req.params.id }, req.body)
     .then((data) => res.send({ message: `Customer was updated` }))
     .catch((err) => {
       res.status(500).send({
