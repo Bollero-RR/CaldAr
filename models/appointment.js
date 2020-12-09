@@ -2,7 +2,6 @@ module.exports = mongoose => {
     const Appointment = mongoose.model(
         "appointments",
         mongoose.Schema({
-            id: Number,
             buildingId:{
                 type: mongoose.Schema.Types.ObjectId
                 },
