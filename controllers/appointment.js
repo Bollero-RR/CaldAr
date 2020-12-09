@@ -2,35 +2,7 @@ const db = require("../models");
 const Appointment = db.appointment;
 
 //Validation Fields
-  //Validate Id
-  const validateId = (res, id) => {
-    if (isNaN(id)) {
-      return res.status(400).send({
-        message: "Write a valid Id",
-      });
-    }
-    return true;
-  };
-  //validate BuildingId
-  const validateBuildingId = (res, buildingId) => {
 
-    if (buildingId < 1 || buildingId > 100) {
-      return res.status(400).send({
-        message: "The building type does not exist!",
-      });
-    }
-    return true;
-  };
-  //validate Boiler ID
-  const validateBoilerId = (res, boilerId) => {
-
-    if (boilerId < 1 || boilerId > 100) {
-      return res.status(400).send({
-        message: "The boiler type does not exist!",
-      });
-    }
-    return true;
-  };
   //validate Start Timestamp
   const validateStartTimestamp = (res, start_timestamp) => {
     const lettersAmount = start_timestamp.length;
@@ -55,29 +27,24 @@ const Appointment = db.appointment;
 //Create and save a new appointment
 exports.create = (req, res) => {
   //Valdiate Request
-  if (!req.body.id || !req.body.buildingId || !req.body.boilerId || !req.body.start_timestamp || !req.body.end_timestamp) {
+  if (!req.body.buildingId || !req.body.boilerId || !req.body.start_timestamp || !req.body.end_timestamp) {
     return res.status(400).send({
       message: "Content cannot be empty any field!"
     })
   }
    //validate request
    const {
-    id,
     buildingId,
     boilerId,
     start_timestamp,
     end_timestamp,
   } = req.body;
 
-  validateId (res,id);
-  validateBuildingId(res,buildingId);
-  validateBoilerId(res,boilerId);
   validateStartTimestamp(res,start_timestamp);
   validateEndTimestamp(res,end_timestamp);
 
   //Create an Appointment
   const newAppointment = new Appointment({
-    id: id,
     buildingId: buildingId,
     boilerId: boilerId,
     start_timestamp: start_timestamp,
@@ -85,7 +52,7 @@ exports.create = (req, res) => {
   });
 
   //Save appointments in the database
-  if(validateId (res,id) && validateBuildingId(res,buildingId) &&  validateBoilerId(res,boilerId) && validateStartTimestamp(res,start_timestamp) && validateEndTimestamp(res,end_timestamp)){
+  if(validateStartTimestamp(res,start_timestamp) && validateEndTimestamp(res,end_timestamp)){
   newAppointment
     .save(newAppointment)
     .then(data => {
@@ -115,7 +82,7 @@ exports.findAll = (req, res) => {
 //Find a single appointment with the id
 exports.findOne = (req, res) => {
   Appointment.findOne({
-      id: req.params.id
+    _id: req.params.id
     })
     .then(data => {
       if (!data) {
@@ -160,7 +127,7 @@ exports.update = (req, res) => {
     });
   }
   //Valdiate Request
-  if (!req.body.id || !req.body.buildingId || !req.body.boilerId || !req.body.start_timestamp || !req.body.end_timestamp) {
+  if (!req.body.buildingId || !req.body.boilerId || !req.body.start_timestamp || !req.body.end_timestamp) {
     return res.status(400).send({
       message: "Content cannot be empty!"
     });
@@ -168,7 +135,7 @@ exports.update = (req, res) => {
   const id = req.params.id;
 
   Appointment.findOneAndUpdate({
-      id
+    _id:id
     }, req.body, {
       useFindAndModify: false
     })
@@ -192,7 +159,7 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
   const id = req.params.id;
   Appointment.findOneAndRemove({
-      id
+    _id:id
     }, {
       useFindAndModify: false
     })
