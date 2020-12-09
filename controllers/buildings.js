@@ -38,11 +38,9 @@ router.get("/fullName/:fullName", (req, res) => {
       )
     );
   } else {
-    res
-      .status(400)
-      .send({
-        msg: `Buildind not found with this Full Name: ${req.params.fullName}`,
-      });
+    res.status(400).send({
+      msg: `Buildind not found with this Full Name: ${req.params.fullName}`,
+    });
   }
 });
 

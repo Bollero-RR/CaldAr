@@ -35,11 +35,9 @@ router.get("/buildingId/:buildingId", (req, res) => {
       )
     );
   } else {
-    res
-      .status(400)
-      .send({
-        msg: `Appointments not found with this BuildingId: ${req.params.buildingId}`,
-      });
+    res.status(400).send({
+      msg: `Appointments not found with this BuildingId: ${req.params.buildingId}`,
+    });
   }
 });
 

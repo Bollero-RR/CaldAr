@@ -35,11 +35,9 @@ router.get("/lastName/:lastName", (req, res) => {
       )
     );
   } else {
-    res
-      .status(400)
-      .send({
-        msg: `Technician not found with this Last Name: ${req.params.lastName}`,
-      });
+    res.status(400).send({
+      msg: `Technician not found with this Last Name: ${req.params.lastName}`,
+    });
   }
 });
 
