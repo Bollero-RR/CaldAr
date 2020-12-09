@@ -16,7 +16,7 @@ const Appointment = db.appointment;
 
     if (buildingId < 1 || buildingId > 100) {
       return res.status(400).send({
-        message: `The building type does not exist!`,
+        message: "The building type does not exist!",
       });
     }
     return true;
@@ -26,7 +26,7 @@ const Appointment = db.appointment;
 
     if (boilerId < 1 || boilerId > 100) {
       return res.status(400).send({
-        message: `The boiler type does not exist!`,
+        message: "The boiler type does not exist!",
       });
     }
     return true;
@@ -36,7 +36,7 @@ const Appointment = db.appointment;
     const lettersAmount = start_timestamp.length;
     if (lettersAmount < 5) {
       return res.status(400).send({
-        message: `The Start Timestamp is not valid`,
+        message: "The Start Timestamp is not valid",
       });
     }
     return true;
@@ -46,7 +46,7 @@ const Appointment = db.appointment;
       const lettersAmount = end_timestamp.length;
       if (lettersAmount < 5) {
         return res.status(400).send({
-          message: `The End Timestamp is not valid`,
+          message: "The End Timestamp is not valid",
         });
       }
       return true;
@@ -57,7 +57,7 @@ exports.create = (req, res) => {
   //Valdiate Request
   if (!req.body.id || !req.body.buildingId || !req.body.boilerId || !req.body.start_timestamp || !req.body.end_timestamp) {
     return res.status(400).send({
-      message: `Content cannot be empty any field!`
+      message: "Content cannot be empty any field!"
     })
   }
    //validate request
@@ -156,13 +156,13 @@ exports.findOneBuildingId = (req, res) => {
 exports.update = (req, res) => {
   if (!req.body) {
     return res.status(400).send({
-      message: `Data updated can not be empty!`
+      message: "Data updated can not be empty!"
     });
   }
   //Valdiate Request
   if (!req.body.id || !req.body.buildingId || !req.body.boilerId || !req.body.start_timestamp || !req.body.end_timestamp) {
     return res.status(400).send({
-      message: `Content cannot be empty!`
+      message: "Content cannot be empty!"
     });
   }
   const id = req.params.id;
@@ -210,4 +210,4 @@ exports.delete = (req, res) => {
         message: err.message || "Error removing the Appointment with the id: " + id
       });
     });
-};
+}

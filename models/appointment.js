@@ -1,13 +1,14 @@
-const {
-    Schema
-} = require("mongoose")
 module.exports = mongoose => {
-    const Appointment = mongoose.model( //para definir un Schema se utiliza el objeto mongoose, con metodo model
-        "appointments", //1er Parámetro: se pone el nombre de la collecion que quiero utilziar en la BD
-        mongoose.Schema({ //2do Parametro, un Schema de mongoose.
+    const Appointment = mongoose.model(
+        "appointments",
+        mongoose.Schema({
             id: Number,
-            buildingId: Number,
-            boilerId: Number,
+            buildingId:{
+                type: mongoose.Schema.Types.ObjectId
+                },
+            boilerId:{
+                type: mongoose.Schema.Types.ObjectId
+                },
             start_timestamp: String,
             end_timestamp: String
         }, {
@@ -15,4 +16,4 @@ module.exports = mongoose => {
         })
     )
     return Appointment
-};
+}
