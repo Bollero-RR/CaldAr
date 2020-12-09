@@ -86,7 +86,7 @@ exports.findOne = (req, res) => {
     .then((data) => {
       if (!data) {
         return res.status(404).send({
-          message: `Boiler with id ${req.params.id} was not exist`,
+          message: `Boiler with id ${req.params.id} does not exist`,
         });
       }
       res.send(data);
@@ -104,7 +104,7 @@ exports.findOneType = (req, res) => {
     .then((data) => {
       if (!data) {
         return res.status(404).send({
-          message: `Boiler with Type id ${req.params.type} was not exist`,
+          message: `Boiler with Type id ${req.params.type} does not exist`,
         });
       }
       res.send(data);
