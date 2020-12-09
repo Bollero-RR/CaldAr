@@ -6,9 +6,7 @@ module.exports = (mongoose) => {
         type: Number,
         description: String,
         stock: Number,
-        skillsId:  [{
-          type: mongoose.Schema.Types.ObjectId.
-          }]
+        skillsId:  [{type: mongoose.Schema.Types.ObjectId}]
       },
       { timestamps: true }
     )
