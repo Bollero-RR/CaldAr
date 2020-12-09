@@ -14,18 +14,30 @@ router.get("/:id", (req, res) => {
   if (found) {
     res.json(customers.filter(idFilter(req)));
   } else {
-    res.status(400).json({ msg: `No customer with the id of ${req.params.id}` });
+    res
+      .status(400)
+      .json({ msg: `No customer with the id of ${req.params.id}` });
   }
 });
 
 //Get customer for one building
 router.get("/buildings/:id", (req, res) => {
-  const found = customers.some((customer) => customer.buildings.some((building) => building === parseInt(req.params.id)))
+  const found = customers.some((customer) =>
+    customer.buildings.some((building) => building === parseInt(req.params.id))
+  );
 
   if (found) {
-    res.json(customers.filter((customer) => customer.buildings.some(building => building === parseInt(req.params.id))));
+    res.json(
+      customers.filter((customer) =>
+        customer.buildings.some(
+          (building) => building === parseInt(req.params.id)
+        )
+      )
+    );
   } else {
-    res.status(400).json({ msg: `No customer with the id of ${req.params.id}` });
+    res
+      .status(400)
+      .json({ msg: `No customer with the id of ${req.params.id}` });
   }
 });
 
