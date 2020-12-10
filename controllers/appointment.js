@@ -1,63 +1,180 @@
-// DECLARATE CONST
-const express = require("express");
-const router = express.Router();
-const appointments = require("../data/appointment.json");
-const idFilter = (req) => (appointment) =>
-  appointment.id === parseInt(req.params.id);
+const db = require("../models");
+const Appointment = db.appointment;
 
-//GET ALL APPOINTMENTS
-router.get("/", (req, res) => {
-  res.json(appointments);
-});
+//Validation Fields
 
-//GET A SINGLE APPOINTMENTS BY ID
-router.get("/:id", (req, res) => {
-  const found = appointments.some(idFilter(req));
-  if (found) {
-    res.json(appointments.filter(idFilter(req)));
-  } else {
-    res
-      .status(400)
-      .json({ msg: `No appointment with the id of ${req.params.id}` });
+  //validate Start Timestamp
+  const validateStartTimestamp = (res, start_timestamp) => {
+    const lettersAmount = start_timestamp.length;
+    if (lettersAmount < 5) {
+      return res.status(400).send({
+        message: "The Start Timestamp is not valid",
+      });
+    }
+    return true;
+  };
+    //validate End Timestamp
+    const validateEndTimestamp = (res, end_timestamp) => {
+      const lettersAmount = end_timestamp.length;
+      if (lettersAmount < 5) {
+        return res.status(400).send({
+          message: "The End Timestamp is not valid",
+        });
+      }
+      return true;
+    };
+
+//Create and save a new appointment
+exports.create = (req, res) => {
+  //Valdiate Request
+  if (!req.body.buildingId || !req.body.boilerId || !req.body.start_timestamp || !req.body.end_timestamp) {
+    return res.status(400).send({
+      message: "Content cannot be empty any field!"
+    })
   }
-});
+   //validate request
+   const {
+    buildingId,
+    boilerId,
+    start_timestamp,
+    end_timestamp,
+  } = req.body;
 
-//GET A SINGLE APPOINTMENTS BY ATTRIBUTE
-router.get("/buildingId/:buildingId", (req, res) => {
-  const found = appointments.some(
-    (appointment) => appointment.buildingId === parseInt(req.params.buildingId)
-  );
-  if (found) {
-    res.json(
-      appointments.filter(
-        (appointment) =>
-          appointment.buildingId === parseInt(req.params.buildingId)
-      )
-    );
-  } else {
-    res.status(400).send({
-      msg: `Appointments not found with this BuildingId: ${req.params.buildingId}`,
+  validateStartTimestamp(res,start_timestamp);
+  validateEndTimestamp(res,end_timestamp);
+
+  //Create an Appointment
+  const newAppointment = new Appointment({
+    buildingId: buildingId,
+    boilerId: boilerId,
+    start_timestamp: start_timestamp,
+    end_timestamp: end_timestamp
+  });
+
+  //Save appointments in the database
+  if(validateStartTimestamp(res,start_timestamp) && validateEndTimestamp(res,end_timestamp)){
+  newAppointment
+    .save(newAppointment)
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while creting the appointment"
+      });
     });
   }
-});
+};
 
-//DELETE APPOINTMENT
-router.delete("/:id", (req, res) => {
-  const found = appointments.some(
-    (appointment) => appointment.id === parseInt(req.params.id)
-  );
-  if (found) {
-    res.json({
-      msg: "Appointment Deleted",
-      appointments: appointments.filter(
-        (appointment) => appointment.id !== parseInt(req.params.id)
-      ),
+//Retrieve all appointments from database
+exports.findAll = (req, res) => {
+  Appointment.find({})
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving appointments"
+      });
     });
-  } else {
-    res
-      .status(400)
-      .json({ msg: `No appointment with the id of ${req.params.id}` });
-  }
-});
+};
 
-module.exports = router;
+//Find a single appointment with the id
+exports.findOne = (req, res) => {
+  Appointment.findOne({
+    _id: req.params.id
+    })
+    .then(data => {
+      if (!data) {
+        return res.status(404).send({
+          message: `Appointment with id: " ${req.params.id} " was not found`
+        })
+      }
+      res.send(data)
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving appointments"
+      })
+    })
+};
+
+//Get single appointment buildingId
+exports.findOneBuildingId = (req, res) => {
+  Appointment.findOne({
+    buildingId: req.params.buildingId
+    })
+    .then(data => {
+      if (!data) {
+        return res.status(404).send({
+          message: `Appointment with buildingId: " ${req.params.buildingId} " was not found`
+        })
+      }
+      res.send(data)
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving appointments"
+      })
+    })
+};
+
+//Update an Appointments by the id in the request
+exports.update = (req, res) => {
+  if (!req.body) {
+    return res.status(400).send({
+      message: "Data updated can not be empty!"
+    });
+  }
+  //Valdiate Request
+  if (!req.body.buildingId || !req.body.boilerId || !req.body.start_timestamp || !req.body.end_timestamp) {
+    return res.status(400).send({
+      message: "Content cannot be empty!"
+    });
+  }
+  const id = req.params.id;
+
+  Appointment.findOneAndUpdate({
+    _id:id
+    }, req.body, {
+      useFindAndModify: false
+    })
+    .then(data => {
+      if (!data) {
+        res.status(404).send({
+          message: `Cannot update appointment with the id: " ${id} ". Maybe the appointment was not found!`
+        });
+      } else res.send({
+        message: `Appointment with the id: " ${id} " was update successfully.`
+      })
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Error updating the appointment with id: " + id
+      });
+    });
+}
+
+//Delete an Appointment with the specified id in the request
+exports.delete = (req, res) => {
+  const id = req.params.id;
+  Appointment.findOneAndRemove({
+    _id:id
+    }, {
+      useFindAndModify: false
+    })
+    .then(data => {
+      if (!data) {
+        res.status(404).send({
+          message: `Cannot delete appointment with the id: " ${id} ". Maybe the appointment was not found!`
+        });
+      } else res.send({
+        message: `Appointment with the id: " ${id} " was deleted successfully.`
+      })
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: err.message || "Error removing the Appointment with the id: " + id
+      });
+    });
+}

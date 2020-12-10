@@ -10,5 +10,6 @@ db.customer = require("./customer")(mongoose);
 db.boilers = require("./boiler")(mongoose);
 db.technician = require('./technician')(mongoose);
 db.building = require("./buildings.js")(mongoose);
+db.appointment = require("./appointment")(mongoose);
 
 module.exports = db;
