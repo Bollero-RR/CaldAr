@@ -1,9 +1,15 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 
-const db = {}
+const db = {};
 db.mongoose = mongoose;
+
 db.url = 'mongodb+srv://admin:MqQs80dXetvVdWo4@cluster0.58ub4.mongodb.net/caldar?retryWrites=true&w=majority';
-db.appointment = require("./appointment")(mongoose);
-db.boilerType = require('./boilerType')(mongoose);
+
+db.boilerType = require("./boilerType")(mongoose);
+db.customer = require("./customer")(mongoose);
+db.boilers = require("./boiler")(mongoose);
 db.technician = require('./technician')(mongoose);
+db.building = require("./buildings.js")(mongoose);
+db.appointment = require("./appointment")(mongoose);
+
 module.exports = db;

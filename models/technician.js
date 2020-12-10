@@ -1,14 +1,13 @@
 module.exports = mongoose => {
     const Technician = mongoose.model (
-        "technicians",
+        "technician",
         mongoose.Schema(
             {
-                id: Number,
                 firstName: String,
                 lastName: String,
                 email: String,
-                typeIds: Array,
-                skillsId: Array,
+                typeIds: [{type: mongoose.Schema.Types.ObjectId}],
+                skillsId: [{type: mongoose.Schema.Types.ObjectId}],
                 hour_rate: String,
                 daily_capacity: Number
             },

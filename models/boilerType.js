@@ -1,16 +1,15 @@
-module.exports = mongoose => {
-    const BoilerType = mongoose.model(
-        "boilertypes",
-        mongoose.Schema(
-            {
-                id: Number,
-                type: String,
-                description: String,
-                stock: Number,
-                skillsId: Number
-            },
-            {timestamps: true}
-        )
+module.exports = (mongoose) => {
+  const BoilerType = mongoose.model(
+    "boilerType",
+    mongoose.Schema(
+      {
+        type: Number,
+        description: String,
+        stock: Number,
+        skillsId:  [{type: mongoose.Schema.Types.ObjectId}]
+      },
+      { timestamps: true }
     )
-    return BoilerType
-}
+  );
+  return BoilerType;
+};
