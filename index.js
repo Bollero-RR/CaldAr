@@ -1,12 +1,14 @@
 const express = require('express');
-const app = express();
 const bodyParser = require("body-parser");
 const db = require("./models");
 const router = require("./routes");
 
+require('dotenv').config()
+
+const app = express();
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
 app.use(router);
 
 db.mongoose
@@ -15,7 +17,19 @@ db.mongoose
     useUnifiedTopology: true,
   })
   .then(() => {
-    console.log("Connected to Mongoo");
+    console.log("*******************************");
+    console.log("╭-------━━━-╮");
+    console.log("╰┃ ┣▇━▇");
+    console.log(" ┃ ┃  ╰━▅╮");
+    console.log(" ╰┳╯ ╰━━┳Connected");
+    console.log("  ╰╮ ┳━━╯ to");
+    console.log(" ▕▔▋ ╰╮╭━╮ Mongo");
+    console.log(" ╱▔╲▋╰━┻┻╮╲╱▔▔▔╲");
+    console.log(" ▏  ▔▔▔▔▔▔▔  O O┃");
+    console.log(" ╲╱▔╲▂▂▂▂╱▔╲▂▂▂╱");
+    console.log("  ▏╳▕▇▇▕ ▏╳▕▇▇▕");
+    console.log("  ╲▂╱╲▂╱ ╲▂╱╲▂╱");
+    console.log("*******************************");
   })
   .catch((err) => {
     console.log("Cannot connect Mongo: ", err);

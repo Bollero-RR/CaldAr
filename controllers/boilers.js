@@ -28,7 +28,6 @@ const validateHourEventualCost = (cost, res) => {
   return true;
 };
 
-//Get all Boiler
 exports.findAll = (req, res) => {
   Boiler.find({})
     .then((data) => res.send(data))
@@ -39,7 +38,6 @@ exports.findAll = (req, res) => {
     });
 };
 
-//Create Boiler
 exports.create = (req, res) => {
   if (
     !req.body.typeId ||
@@ -80,7 +78,6 @@ exports.create = (req, res) => {
     });
 };
 
-//Get single Boiler
 exports.findOne = (req, res) => {
   Boiler.findOne({ _id: req.params.id })
     .then((data) => {
@@ -98,7 +95,6 @@ exports.findOne = (req, res) => {
     });
 };
 
-//Get single Boiler for type
 exports.findOneType = (req, res) => {
   Boiler.findOne({ typeId: req.params.type })
     .then((data) => {
@@ -116,7 +112,6 @@ exports.findOneType = (req, res) => {
     });
 };
 
-//Update Boiler
 exports.update = (req, res) => {
   if (
     !req.body.typeId ||
@@ -142,7 +137,6 @@ exports.update = (req, res) => {
     });
 };
 
-//Delete boiler
 exports.delete = (req, res) => {
   Boiler.findOneAndRemove({ _id: req.params.id }, { useFindAndModify: false })
     .then((data) => res.send({ message: `Boiler was removed` }))

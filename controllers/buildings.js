@@ -1,10 +1,54 @@
 
 const db = require("../models");
 const Building = db.building;
+
 const numbersEr =/\d/g;
 const lettersEr = new RegExp('[A-D]','i')
 
-//retrieve all buildings from DB
+const validateBusinessName = (res, businessName) => {
+  const lettersAmount = businessName.length;
+  if (lettersAmount < 2) {
+    return res.status(400).send({
+      message: `The name must contain 2 letters or less`,
+    });
+  }
+  return true;
+};
+
+const validateEmail = (res, email) => {
+  const at = email.indexOf("@");
+  const com = email.indexOf(".com");
+  if (at === -1 || com ===-1) {
+    return res.status(400).send({
+      message: `invalid e-mail, the E-mail must contain @ and .com`,
+    });
+  }
+  return true;
+};
+
+const validatePhone = (res, phone) => {
+const numberAmount = phone.length;
+const character = new RegExp('^[+0-9]+[^-_()\\s]$');
+  if ( numberAmount<7 || !character.test(phone)) {
+    return res.status(400).send({
+      message: `Number of at least 7 digits, do not accept spaces, hyphens or parentheses`,
+    });
+  }
+  return true;
+};
+const validateAdress = (res, adress) =>{
+  const lettersAmount = adress.length;
+  const space = adress.indexOf(" ");
+  const gotNumber = numbersEr.test(adress);
+
+  if (lettersAmount < 5 || space ===-1 || !gotNumber) {
+    return res.status(400).send({
+      message: `adress must contain least 5 characters, with letters, numbers and a space`,
+    });
+  }
+  return true;
+}
+
 exports.findAll = (req, res) => {
   Building.find({})
     .then(data => 
@@ -17,61 +61,7 @@ exports.findAll = (req, res) => {
     })
 };
 
-//validate fields
-
-    //validate BusinessName
-    const validateBusinessName = (res, businessName) => {
-      const lettersAmount = businessName.length;
-      if (lettersAmount < 2) {
-        return res.status(400).send({
-          message: `The name must contain 2 letters or less`,
-        });
-      }
-      return true;
-    };
-
-    //validate email
-    const validateEmail = (res, email) => {
-      const at = email.indexOf("@");
-      const com = email.indexOf(".com");
-      if (at === -1 || com ===-1) {
-        return res.status(400).send({
-          message: `invalid e-mail, the E-mail must contain @ and .com`,
-        });
-      }
-      return true;
-    };
-
-    //validate phone
-    const validatePhone = (res, phone) => {
-    const numberAmount = phone.length;
-    const character = new RegExp('^[+0-9]+[^-_()\\s]$');
-      if ( numberAmount<7 || !character.test(phone)) {
-        return res.status(400).send({
-          message: `Number of at least 7 digits, do not accept spaces, hyphens or parentheses`,
-        });
-      }
-      return true;
-    };
-    //validate Adress
-    const validateAdress = (res, adress) =>{
-      const lettersAmount = adress.length;
-      const space = adress.indexOf(" ");
-      const gotNumber = numbersEr.test(adress);
-
-      if (lettersAmount < 5 || space ===-1 || !gotNumber) {
-        return res.status(400).send({
-          message: `adress must contain least 5 characters, with letters, numbers and a space`,
-        });
-      }
-      return true;
-    }
-
-
-//create & save a new building
 exports.create = (req, res) => {
-
-   //validate request
 
 if (!req.body.businessName || 
   !req.body.email ||
@@ -94,7 +84,6 @@ if (!req.body.businessName ||
   validatePhone(res,phone);
   validateAdress(res,adress);
   
-  //create a building
     const newBuilding = new Building({
       businessName,
       email,
@@ -103,7 +92,6 @@ if (!req.body.businessName ||
       boilersId
   })
 
-  //save building in the DB
   if (
   validateBusinessName(res,businessName)&&
   validateEmail (res,email)&&
@@ -124,7 +112,6 @@ if (!req.body.businessName ||
 };
 }
 
-//Retrieve a single building by phone
 exports.findOnePhone = (req, res) => {
   if (!req.params.phone){
     return res.status(400).send({
@@ -148,7 +135,6 @@ exports.findOnePhone = (req, res) => {
   })
 };
 
-//find a single building with an id
 exports.findOne = (req, res) =>{
   if (!req.params.id){
     return res.status(400).send({
@@ -173,7 +159,6 @@ exports.findOne = (req, res) =>{
   });
 };
 
-//Update a Building by the id in the request
 exports.update = (req, res) =>{
   if (!req.body){
     return res.status(400).send({
@@ -205,7 +190,6 @@ exports.update = (req, res) =>{
     });
 };
 
-//delete a building 
 exports.delete = (req, res) =>{
 const id = req.params.id;
 if (!req.params.id){

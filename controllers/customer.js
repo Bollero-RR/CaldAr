@@ -45,7 +45,6 @@ const validateFiscalAddress = (address, res) => {
   return true;
 };
 
-//Get all customer
 exports.findAll = (req, res) => {
   Customer.find({})
     .then((data) => res.send(data))
@@ -56,7 +55,6 @@ exports.findAll = (req, res) => {
     });
 };
 
-//Create customer
 exports.create = (req, res) => {
   if (
     !req.body.customerType ||
@@ -92,7 +90,6 @@ exports.create = (req, res) => {
     });
 };
 
-//Get single customer
 exports.findOne = (req, res) => {
 
   Customer.findOne({ _id: req.params.id })
@@ -111,7 +108,6 @@ exports.findOne = (req, res) => {
     });
 };
 
-//Get single customer email
 exports.findOneEmail = (req, res) => {
 
   validateEmail(req.params.email, res);
@@ -132,7 +128,6 @@ exports.findOneEmail = (req, res) => {
     });
 };
 
-//Update customer
 exports.update = (req, res) => {
   if (
     !req.body.customerType ||
@@ -158,7 +153,6 @@ exports.update = (req, res) => {
     });
 };
 
-//Delete customer
 exports.delete = (req, res) => {
 
   Customer.findOneAndRemove({ _id: req.params.id })

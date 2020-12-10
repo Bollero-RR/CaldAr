@@ -1,6 +1,6 @@
-const e = require("express");
 const db = require("../models");
 const Technician = db.technician;
+
 const errEmail = new RegExp(/^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i)
 
 const validateFirstName = (firstName, res)=> {
@@ -48,170 +48,164 @@ const validateDaily_Capacity = (daily_capacity, res) => {
   return true;
 };
 
-  // Retrieve all technicians
-  exports.findAll = (req, res) => {
-    Technician.find({})
+exports.findAll = (req, res) => {
+  Technician.find({})
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving technicians"
+      });
+    });
+};
+
+exports.create = (req, res) => {
+
+  if (!req.body.firstName || !req.body.lastName || !req.body.email || !req.body.hour_rate || !req.body.daily_capacity) {
+    return res.status(400).send({
+      message: `Content cannot be empty!`
+    })
+  }
+
+  const {
+    firstName,
+    lastName,
+    email,
+    typeIds,
+    skillsId,
+    hour_rate,
+    daily_capacity,
+  } = req.body;
+
+  validateFirstName(firstName, res);
+  validateLastName(lastName, res);
+  validateEmail(email, res);
+  validateHour_Rate(hour_rate, res);
+  validateDaily_Capacity(daily_capacity, res);
+
+  const newTechnician = new Technician({
+    firstName: firstName,
+    lastName: lastName,
+    email: email,
+    typeIds: typeIds,
+    skillsId: skillsId,
+    hour_rate: hour_rate,
+    daily_capacity: daily_capacity,
+  });
+
+  if(validateFirstName(firstName, res) &&  validateLastName(lastName, res) && validateEmail(email, res) && validateHour_Rate(hour_rate, res) && validateDaily_Capacity(daily_capacity, res)){
+    newAppointment
+      .save(newAppointment)
       .then(data => {
         res.send(data);
       })
       .catch(err => {
         res.status(500).send({
-          message: err.message || "Some error occurred while retrieving technicians"
+          message: err.message || "Some error occurred while creting the appointment"
         });
       });
-  };
+  }
+};
 
-  // Create a new technician
-  exports.create = (req, res) => {
+exports.findOne = (req, res) => {
 
-    if (!req.body.firstName || !req.body.lastName || !req.body.email || !req.body.hour_rate || !req.body.daily_capacity) {
-      return res.status(400).send({
-        message: `Content cannot be empty!`
-      })
-    }
-
-    const {
-      firstName,
-      lastName,
-      email,
-      typeIds,
-      skillsId,
-      hour_rate,
-      daily_capacity,
-    } = req.body;
-
-    validateFirstName(firstName, res);
-    validateLastName(lastName, res);
-    validateEmail(email, res);
-    validateHour_Rate(hour_rate, res);
-    validateDaily_Capacity(daily_capacity, res);
-
-    const newTechnician = new Technician({
-      firstName: firstName,
-      lastName: lastName,
-      email: email,
-      typeIds: typeIds,
-      skillsId: skillsId,
-      hour_rate: hour_rate,
-      daily_capacity: daily_capacity,
+  if (!req.params.id) {
+    return res.status(400).send({
+      message: `Content cannot be empty!`,
     });
+  }
 
-    if(validateFirstName(firstName, res) &&  validateLastName(lastName, res) && validateEmail(email, res) && validateHour_Rate(hour_rate, res) && validateDaily_Capacity(daily_capacity, res)){
-      newAppointment
-        .save(newAppointment)
-        .then(data => {
-          res.send(data);
-        })
-        .catch(err => {
-          res.status(500).send({
-            message: err.message || "Some error occurred while creting the appointment"
-          });
-        });
-    }
-  };
-
-  // Retrieve a single technician by id
-  exports.findOne = (req, res) => {
-
-    if (!req.params.id) {
-      return res.status(400).send({
-        message: `Content cannot be empty!`,
-      });
-    }
-
-    Technician.findOne({_id: req.params.id})
-      .then(data => {
-        if (!data) {
-          return res.status(404).send({
-            message: `Technician with id: " ${req.params.id} " was not found`
-          })
-        }
-        res.send(data)
-      })
-      .catch(err => {
-        res.status(500).send({
-          message: err.message || "Some error occurred while retrieving technicians"
-        })
-      })
-  };
-
-  // Retrieve a single technician by Last Name
-  exports.findOneLastName = (req, res) => {
-
-    if (!req.params.lastName) {
-      return res.status(400).send({
-        message: `Content cannot be empty!`,
-      });
-    }
-
-    Technician.findOne({lastName: req.params.lastName})
+  Technician.findOne({_id: req.params.id})
     .then(data => {
-      if(!data){
+      if (!data) {
         return res.status(404).send({
-          message: `Technician with Last Name:${req.params.lastName} was not found`
+          message: `Technician with id: " ${req.params.id} " was not found`
         })
       }
       res.send(data)
     })
     .catch(err => {
       res.status(500).send({
-        message:
-        err.message || "Some error ocurred while searching Last Name Technician."
+        message: err.message || "Some error occurred while retrieving technicians"
       })
     })
-  },
+};
 
-  // Update a Technician by id
-  exports.update = (req, res) => {
-   
-    if (!req.body.firstName || !req.body.lastName || !req.body.email || !req.body.typeIds || !req.body.skillsId || !req.body.hour_rate || !req.body.daily_capacity) {
-      return res.status(400).send({
-        message: `Content cannot be empty!2`
-      });
-    }
-    const id = req.params.id;
+exports.findOneLastName = (req, res) => {
 
-    Technician.findOneAndUpdate({_id:id}, req.body, {useFindAndModify: false})
-      .then(data => {
-        if (!data) {
-          res.status(404).send({
-            message: `Cannot update technician with the id: " ${id} ". Maybe the technician was not found!`
-          });
-        } else res.send({
-          message: "Technician was update successfully."
-        })
-      })
-      .catch(err => {
-        res.status(500).send({
-          message: "Error updating the technician with id: " + id
-        });
-      });
+  if (!req.params.lastName) {
+    return res.status(400).send({
+      message: `Content cannot be empty!`,
+    });
   }
-  // Delete a Technician 
-  exports.delete = (req, res) => {
 
-    if (!req.params.id) {
-      return res.status(400).send({
-        message: `Content cannot be empty!`,
-      });
-    }
-  
-    const id = req.params.id;
-    
-    Technician.findOneAndRemove({_id:id}, {useFindAndModify: false})
-      .then(data => {
-        if (!data) {
-          res.status(404).send({
-            message: `Cannot delete technician with the id: " ${id} ". Maybe the technician was not found!`
-          });
-        } else res.send({
-          message: `Technician with the id: " ${id} " was delete successfully.`
-        })
+  Technician.findOne({lastName: req.params.lastName})
+  .then(data => {
+    if(!data){
+      return res.status(404).send({
+        message: `Technician with Last Name:${req.params.lastName} was not found`
       })
-      .catch(err => {
-        res.status(500).send({
-          message: err.message || "Error removing the Technician with the id: " + id
-        });
-      });
-  };
+    }
+    res.send(data)
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error ocurred while searching Last Name Technician."
+    })
+  })
+},
+
+exports.update = (req, res) => {
   
+  if (!req.body.firstName || !req.body.lastName || !req.body.email || !req.body.typeIds || !req.body.skillsId || !req.body.hour_rate || !req.body.daily_capacity) {
+    return res.status(400).send({
+      message: `Content cannot be empty!2`
+    });
+  }
+  const id = req.params.id;
+
+  Technician.findOneAndUpdate({_id:id}, req.body, {useFindAndModify: false})
+    .then(data => {
+      if (!data) {
+        res.status(404).send({
+          message: `Cannot update technician with the id: " ${id} ". Maybe the technician was not found!`
+        });
+      } else res.send({
+        message: "Technician was update successfully."
+      })
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Error updating the technician with id: " + id
+      });
+    });
+}
+
+exports.delete = (req, res) => {
+
+  if (!req.params.id) {
+    return res.status(400).send({
+      message: `Content cannot be empty!`,
+    });
+  }
+
+  const id = req.params.id;
+  
+  Technician.findOneAndRemove({_id:id}, {useFindAndModify: false})
+    .then(data => {
+      if (!data) {
+        res.status(404).send({
+          message: `Cannot delete technician with the id: " ${id} ". Maybe the technician was not found!`
+        });
+      } else res.send({
+        message: `Technician with the id: " ${id} " was delete successfully.`
+      })
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: err.message || "Error removing the Technician with the id: " + id
+      });
+    });
+};
