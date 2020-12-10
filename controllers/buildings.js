@@ -224,5 +224,3 @@ Building.findOneAndRemove({_id: req.body.id}, {useFindAndModify: false})
     })
   })
 };
-
-
