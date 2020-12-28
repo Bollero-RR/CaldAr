@@ -7,7 +7,6 @@
     "start": "node index",
     "lint": "eslint",
     "prettier": "prettier --write .",
-    "postinstall": "husky install",
     "dev": "nodemon index"
   },
   "repository": {
