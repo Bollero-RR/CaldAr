@@ -8,7 +8,7 @@ const appointmentRouter = require("./appointment");
 
 router.use("/boilerType", boilerTypeRouter);
 router.use("/api/customers", customerRouter);
-router.use("/boilers", boilerRouter);
+router.use("api/boilers", boilerRouter);
 router.use('/technician', technicianRouter);
 router.use('/buildings', buildingRouter);
 router.use("/appointment", appointmentRouter)
