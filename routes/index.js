@@ -7,7 +7,7 @@ const buildingRouter = require('./buildings');
 const appointmentRouter = require("./appointment");
 
 router.use("/boilerType", boilerTypeRouter);
-router.use("/customers", customerRouter);
+router.use("/api/customers", customerRouter);
 router.use("/boilers", boilerRouter);
 router.use('/technician', technicianRouter);
 router.use('/buildings', buildingRouter);
