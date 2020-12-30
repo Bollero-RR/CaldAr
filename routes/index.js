@@ -6,11 +6,11 @@ const technicianRouter = require('./technician');
 const buildingRouter = require('./buildings');
 const appointmentRouter = require("./appointment");
 
-router.use("/boilerType", boilerTypeRouter);
+router.use("/api/boilerType", boilerTypeRouter);
 router.use("/api/customers", customerRouter);
 router.use("/api/boilers", boilerRouter);
-router.use('/technician', technicianRouter);
-router.use('/buildings', buildingRouter);
-router.use("/appointment", appointmentRouter)
+router.use('/api/technician', technicianRouter);
+router.use('/api/buildings', buildingRouter);
+router.use("/api/appointment", appointmentRouter)
 
 module.exports = router;
