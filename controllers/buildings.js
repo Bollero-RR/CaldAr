@@ -74,10 +74,7 @@ if (!req.body.businessName ||
    }) 
   } 
 
-  const businessName = req.body.businessName;
-  const email = req.body.email;
-  const phone = req.body.phone;
-  const adress = req.body.adress;
+  const {businessName,email,phone,adress,boilersId} =req.body;
 
   validateBusinessName(res,businessName);
   validateEmail(res,email);
@@ -92,12 +89,6 @@ if (!req.body.businessName ||
       boilersId
   })
 
-  if (
-  validateBusinessName(res,businessName)&&
-  validateEmail (res,email)&&
-  validateAdress (res,adress)&&
-  validatePhone(res,phone)
-  ){
   newBuilding
     .save(newBuilding)
     .then(data =>{
@@ -110,7 +101,6 @@ if (!req.body.businessName ||
       })
     })
 };
-}
 
 exports.findOnePhone = (req, res) => {
   if (!req.params.phone){
@@ -191,18 +181,12 @@ exports.update = (req, res) =>{
 };
 
 exports.delete = (req, res) =>{
-const id = req.params.id;
-if (!req.params.id){
-  return res.status(400).send({
-    message: `Content cannot be empty!`,
-  })
-}
 
-Building.findOneAndRemove({_id: req.body.id}, {useFindAndModify: false})
-  .then((_data) =>
+Building.findOneAndRemove({_id: req.body.id})
+  .then((data) =>
     res.status(200).send({message: "building was removed sucessfully"})
     )
-  .catch((_err) => {
+  .catch((err) => {
     res.status(500).send({
       message: "error removing building"
     })
