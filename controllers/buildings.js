@@ -180,15 +180,13 @@ exports.update = (req, res) =>{
     });
 };
 
-exports.delete = (req, res) =>{
+exports.delete = (req, res) => {
 
-Building.findOneAndRemove({_id: req.body.id})
-  .then((data) =>
-    res.status(200).send({message: "building was removed sucessfully"})
-    )
-  .catch((err) => {
-    res.status(500).send({
-      message: "error removing building"
-    })
-  })
+  Building.findOneAndRemove({ _id: req.params.id })
+    .then((data) => res.send({ message: `Building was removed sucessfully` }))
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Some error",
+      });
+    });
 };
