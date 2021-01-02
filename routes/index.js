@@ -3,7 +3,7 @@ const technicianRouter = require('./technician');
 
 var router = require("express").Router();
 
-router.use('./technician', technicianRouter);
+router.use('./api/technician', technicianRouter);
 
 module.exports = router;
 

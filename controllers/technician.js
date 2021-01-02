@@ -1,4 +1,3 @@
-const e = require("express");
 const db = require("../models");
 const Technician = db.technician;
 const errEmail = new RegExp(/^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i)
@@ -97,14 +96,14 @@ const validateDaily_Capacity = (daily_capacity, res) => {
     });
 
     if(validateFirstName(firstName, res) &&  validateLastName(lastName, res) && validateEmail(email, res) && validateHour_Rate(hour_rate, res) && validateDaily_Capacity(daily_capacity, res)){
-      newAppointment
-        .save(newAppointment)
+      newTechnician
+        .save(newTechnician)
         .then(data => {
           res.send(data);
         })
         .catch(err => {
           res.status(500).send({
-            message: err.message || "Some error occurred while creting the appointment"
+            message: err.message || "Some error occurred while creting the technician"
           });
         });
     }
@@ -169,13 +168,18 @@ const validateDaily_Capacity = (daily_capacity, res) => {
         message: `Content cannot be empty!2`
       });
     }
-    const id = req.params.id;
 
-    Technician.findOneAndUpdate({_id:id}, req.body, {useFindAndModify: false})
+    validateFirstName(firstName, res);
+    validateLastName(lastName, res);
+    validateEmail(email, res);
+    validateHour_Rate(hour_rate, res);
+    validateDaily_Capacity(daily_capacity, res);
+
+    Technician.findOneAndUpdate({_id: req.params.id}, req.body, {useFindAndModify: false})
       .then(data => {
         if (!data) {
           res.status(404).send({
-            message: `Cannot update technician with the id: " ${id} ". Maybe the technician was not found!`
+            message: `Cannot update technician with id=${id}. Maybe the technician was not found!`
           });
         } else res.send({
           message: "Technician was update successfully."
@@ -183,7 +187,7 @@ const validateDaily_Capacity = (daily_capacity, res) => {
       })
       .catch(err => {
         res.status(500).send({
-          message: "Error updating the technician with id: " + id
+          message: `Error updating the technician with id=${id} `
         });
       });
   }
@@ -195,22 +199,20 @@ const validateDaily_Capacity = (daily_capacity, res) => {
         message: `Content cannot be empty!`,
       });
     }
-  
-    const id = req.params.id;
     
-    Technician.findOneAndRemove({_id:id}, {useFindAndModify: false})
+    Technician.findOneAndRemove({ _id: req.params.id}, {useFindAndModify: false})
       .then(data => {
         if (!data) {
           res.status(404).send({
-            message: `Cannot delete technician with the id: " ${id} ". Maybe the technician was not found!`
+            message: `Cannot delete technician with id=${id}. Maybe the technician was not found!`
           });
         } else res.send({
-          message: `Technician with the id: " ${id} " was delete successfully.`
+          message: `Technician with id=${id} was delete successfully.`
         })
       })
       .catch(err => {
         res.status(500).send({
-          message: err.message || "Error removing the Technician with the id: " + id
+          message: err.message || `Error removing the Technician with id=${id} `
         });
       });
   };

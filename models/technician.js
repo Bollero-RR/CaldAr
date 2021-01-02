@@ -6,8 +6,16 @@ module.exports = mongoose => {
                 firstName: String,
                 lastName: String,
                 email: String,
-                typeIds: [{type: mongoose.Schema.Types.ObjectId}],
-                skillsId: [{type: mongoose.Schema.Types.ObjectId}],
+                typeIds: [
+                    {
+                        type: mongoose.Schema.Types.ObjectId
+                    }
+                ],
+                skillsId: [
+                    {
+                        type: mongoose.Schema.Types.ObjectId
+                    }
+                ],
                 hour_rate: String,
                 daily_capacity: Number
             },
