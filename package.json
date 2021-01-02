@@ -7,7 +7,6 @@
     "start": "node index",
     "lint": "eslint",
     "prettier": "prettier --write .",
-    "postinstall": "husky install",
     "dev": "nodemon index"
   },
   "repository": {
@@ -22,12 +21,20 @@
   "homepage": "https://github.com/DavidArroyo92/CaldAr#readme",
   "dependencies": {
     "body": "^5.1.0",
+<<<<<<< HEAD
+=======
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+>>>>>>> 9d045be29d2b169dca26f1c9959e1d640f9a42a4
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "mongodb": "^3.6.3",
     "mongoose": "^5.10.17",
     "parser": "^0.1.4",
+<<<<<<< HEAD
     "lodash.uniq": "^4.5.0",
+=======
+>>>>>>> 9d045be29d2b169dca26f1c9959e1d640f9a42a4
     "prettier": "^2.2.1"
   },
   "devDependencies": {

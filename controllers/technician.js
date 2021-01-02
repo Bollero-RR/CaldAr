@@ -1,5 +1,6 @@
 const db = require("../models");
 const Technician = db.technician;
+
 const errEmail = new RegExp(/^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i)
 
 const validateFirstName = (firstName, res)=> {

@@ -1,8 +1,6 @@
 const db = require("../models");
 const BoilerType = db.boilerType;
 
-
-//validation boiler type
 const validationType = (res, type) => {
   if (type < 1 || type > 4) {
     return res.status(400).send({
@@ -12,7 +10,6 @@ const validationType = (res, type) => {
   return true;
 };
 
-//validation stock
 const validationStock = (res, stock) => {
   if (stock < 1) {
     return res.status(400).send({
@@ -24,7 +21,6 @@ const validationStock = (res, stock) => {
 };
 
 
-//Get all boiler type
 exports.findAll = (req, res) => {
   BoilerType.find({})
     .then((data) => {
@@ -37,7 +33,6 @@ exports.findAll = (req, res) => {
     });
 };
 
-//Create boiler type
 exports.create = (req, res) => {
   if (
     !req.body.type ||
@@ -78,7 +73,6 @@ exports.create = (req, res) => {
   }
 };
 
-//Update boiler type
 exports.update = (req, res) => {
   if (
     !req.body.type ||
@@ -108,7 +102,6 @@ exports.update = (req, res) => {
     });
 };
 
-//Get single boiler type
 exports.findOneType = (req, res) => {
  
   BoilerType.findOne({ type: req.params.type })
@@ -128,7 +121,6 @@ exports.findOneType = (req, res) => {
     });
 };
 
-//Get single id
 exports.findOneId = (req, res) => {
   BoilerType.findOne({ _id: req.params.id })
     .then((data) => {
@@ -148,7 +140,6 @@ exports.findOneId = (req, res) => {
 };
 
 
-//Delete boiler
 exports.delete = (req, res) => {
 
   const _id = req.params.id;

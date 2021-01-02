@@ -7,4 +7,5 @@ router.get("/:id", boilers.findOne);
 router.get("/type/:type", boilers.findOneType);
 router.put("/:id", boilers.update);
 router.delete("/:id", boilers.delete);
+
 module.exports = router;
