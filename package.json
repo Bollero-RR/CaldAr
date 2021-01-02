@@ -5,6 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node index",
+    "lint": "eslint",
+    "prettier": "prettier --write .",
+    "postinstall": "husky install",
     "dev": "nodemon index"
   },
   "repository": {
@@ -23,9 +26,24 @@
     "express": "^4.17.1",
     "mongodb": "^3.6.3",
     "mongoose": "^5.10.17",
-    "parser": "^0.1.4"
+    "parser": "^0.1.4",
+    "lodash.uniq": "^4.5.0",
+    "prettier": "^2.2.1"
   },
   "devDependencies": {
-    "nodemon": "^2.0.6"
+    "eslint": "^7.15.0",
+    "husky": "^5.0.4",
+    "lint-staged": "^10.5.3",
+    "nodemon": "^2.0.6",
+    "pinst": "^2.1.1",
+    "pretty-quick": "^3.1.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": "eslint --cache --fix"
   }
 }

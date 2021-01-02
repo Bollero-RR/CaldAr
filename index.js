@@ -5,7 +5,9 @@ const db = require("./models");
 const router = require("./routes");
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(router);
 
 db.mongoose
   .connect(db.url, {
@@ -13,19 +15,13 @@ db.mongoose
     useUnifiedTopology: true,
   })
   .then(() => {
-    console.log("Connected to the database");
+    console.log("Connected to Mongoo");
   })
   .catch((err) => {
-    console.log("Cannot connect to the database: ", err);
+    console.log("Cannot connect Mongo: ", err);
     process.exit();
   });
-
-app.use(router);
 
 const PORT = process.env.PORT || 2000;
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
-
-
-
-  
