@@ -62,7 +62,13 @@ exports.findAll = (req, res) => {
 
 exports.create = (req, res) => {
 
-  if (!req.body.firstName || !req.body.lastName || !req.body.email || !req.body.hour_rate || !req.body.daily_capacity) {
+  if (
+    !req.body.firstName || 
+    !req.body.lastName || 
+    !req.body.email ||
+    !req.body.hour_rate || 
+    !req.body.daily_capacity
+  ) {
     return res.status(400).send({
       message: `Content cannot be empty!`
     })
@@ -85,27 +91,25 @@ exports.create = (req, res) => {
   validateDaily_Capacity(daily_capacity, res);
 
   const newTechnician = new Technician({
-    firstName: firstName,
-    lastName: lastName,
-    email: email,
-    typeIds: typeIds,
-    skillsId: skillsId,
-    hour_rate: hour_rate,
-    daily_capacity: daily_capacity,
+    firstName,
+    lastName,
+    email,
+    typeIds,
+    skillsId,
+    hour_rate,
+    daily_capacity,
   });
 
-  if(validateFirstName(firstName, res) &&  validateLastName(lastName, res) && validateEmail(email, res) && validateHour_Rate(hour_rate, res) && validateDaily_Capacity(daily_capacity, res)){
-    newAppointment
-      .save(newAppointment)
-      .then(data => {
-        res.send(data);
-      })
-      .catch(err => {
-        res.status(500).send({
-          message: err.message || "Some error occurred while creting the appointment"
-        });
+  newTechnician
+    .save(newTechnician)
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while creting the appointment"
       });
-  }
+    });
 };
 
 exports.findOne = (req, res) => {
@@ -158,54 +162,42 @@ exports.findOneLastName = (req, res) => {
 },
 
 exports.update = (req, res) => {
-  
-  if (!req.body.firstName || !req.body.lastName || !req.body.email || !req.body.typeIds || !req.body.skillsId || !req.body.hour_rate || !req.body.daily_capacity) {
+  if (
+    !req.body.firstName || 
+    !req.body.lastName || 
+    !req.body.email || 
+    !req.body.typeIds || 
+    !req.body.skillsId || 
+    !req.body.hour_rate || 
+    !req.body.daily_capacity
+  ) {
     return res.status(400).send({
       message: `Content cannot be empty!2`
     });
   }
-  const id = req.params.id;
 
-  Technician.findOneAndUpdate({_id:id}, req.body, {useFindAndModify: false})
-    .then(data => {
-      if (!data) {
-        res.status(404).send({
-          message: `Cannot update technician with the id: " ${id} ". Maybe the technician was not found!`
-        });
-      } else res.send({
-        message: "Technician was update successfully."
-      })
-    })
-    .catch(err => {
+  validateFirstName(req.body.firstName, res);
+  validateLastName(req.body.lastName, res);
+  validateEmail(req.body.email, res);
+  validateHour_Rate(req.body.hour_rate, res);
+  validateDaily_Capacity(req.body.daily_capacity, res);
+
+  Technician.findOneAndUpdate({ _id: req.params.id }, req.body)
+    .then((data) => res.send({ message: `Technician was updated` }))
+    .catch((err) => {
       res.status(500).send({
-        message: "Error updating the technician with id: " + id
+        message: err.message || "Some error",
       });
     });
-}
+};
 
 exports.delete = (req, res) => {
 
-  if (!req.params.id) {
-    return res.status(400).send({
-      message: `Content cannot be empty!`,
-    });
-  }
-
-  const id = req.params.id;
-  
-  Technician.findOneAndRemove({_id:id}, {useFindAndModify: false})
-    .then(data => {
-      if (!data) {
-        res.status(404).send({
-          message: `Cannot delete technician with the id: " ${id} ". Maybe the technician was not found!`
-        });
-      } else res.send({
-        message: `Technician with the id: " ${id} " was delete successfully.`
-      })
-    })
-    .catch(err => {
+  Technician.findOneAndRemove({ _id: req.params.id })
+    .then((data) => res.send({ message: `Technician was removed` }))
+    .catch((err) => {
       res.status(500).send({
-        message: err.message || "Error removing the Technician with the id: " + id
+        message: err.message || "Some error",
       });
     });
 };
