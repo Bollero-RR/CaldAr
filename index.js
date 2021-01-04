@@ -10,7 +10,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(router);
-app.use(express.static('build02'));
+//app.use(express.static('build'));
 
 db.mongoose
   .connect(db.url, {
