@@ -22,7 +22,8 @@ const validateLastName = (lastName, res) => {
 };
 
 const validateEmail = (email, res) => {
-  if (!errEmail.test(email.value)) {
+  const emailRegExp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+  if (!emailRegExp.test(email)) {
     return res.status(400).send({
       message: `Email error. Please enter a valid email`,
     });
